@@ -15,5 +15,6 @@ data class Hsedata(
     val primary_key: String,
     val reg_date: String,
     val securityissueyes: String,
-    val toolboxtopics: String)
+    val toolboxtopics: String,
+    val anycomment : String)
 

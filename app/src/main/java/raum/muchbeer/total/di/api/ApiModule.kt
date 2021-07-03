@@ -97,4 +97,16 @@ object ApiModule {
     @Provides
     fun providesGrievenceGeneral()  : DataService {
         return DataRetroInstance().sendGrievanceGeneral()     }
+
+    @Named("vehicle")
+    @Singleton
+    @Provides
+    fun providesVehicleData()  : DataService {
+        return DataRetroInstance().sendVehicleToServer()     }
+
+    @Named("requestvehicle")
+    @Singleton
+    @Provides
+    fun providesRequestVehicleData()  : DataService {
+        return DataRetroInstance().requestVehicleFromServer()     }
 }

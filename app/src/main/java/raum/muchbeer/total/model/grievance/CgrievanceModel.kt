@@ -32,5 +32,7 @@ data class CgrievanceModel(
     val grievanceexplanation : String,
     @SerializedName("full_name")
     @PrimaryKey(autoGenerate = false)
-    val full_name : String
+    val full_name : String,
+    @SerializedName("inquirytype")
+    val inquirytype : String
 ) : Parcelable

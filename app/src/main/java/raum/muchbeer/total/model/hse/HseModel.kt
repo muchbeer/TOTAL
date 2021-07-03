@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import raum.muchbeer.total.db.Converters
+import raum.muchbeer.total.model.hse.Hsedata
 
 @Entity(tableName = "hse_general_table")
 data class HseModel(

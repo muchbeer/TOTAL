@@ -30,7 +30,8 @@ android {
         buildConfigField "String", "BASE_URL_PAP_ENTRY", "\"https://www.sheriakiganjani.co.tz/androidpostpapdetails.php/\""
         buildConfigField "String", "BASE_URL_HSE_ENTRY", "\"https://www.sheriakiganjani.co.tz/androidposthsedata.php/\""
         buildConfigField "String", "BASE_URL_ENGAGE_ENTRY", "\"https://sheriakiganjani.co.tz/postengagementofficerdata.php/\""
-        buildConfigField "String", "BASE_URL_VEHICLE_ENTRY", "\"https://www.sheriakiganjani.co.tz/getvehiclesdetails.php/\""
+        buildConfigField "String", "BASE_URL_VEHICLE_ENTRY", "\"https://www.sheriakiganjani.co.tz/androidpostvehiclesreport.php/\""
+        buildConfigField "String", "BASE_URL_VEHICLE_REQUEST_ENTRY", "\"https://www.sheriakiganjani.co.tz/getvehiclesdetails.php/\""
 
     }
 

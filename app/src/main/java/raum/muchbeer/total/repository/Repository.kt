@@ -15,7 +15,6 @@ import org.json.JSONObject
 import raum.muchbeer.total.BuildConfig
 import raum.muchbeer.total.api.DataService
 import raum.muchbeer.total.datastore.UserDataPref
-import raum.muchbeer.total.db.hsedao.HseDao
 import raum.muchbeer.total.model.DataState
 import raum.muchbeer.total.model.engagement.EngageModel
 import raum.muchbeer.total.model.grievance.AgrienceModel
@@ -28,9 +27,16 @@ import raum.muchbeer.total.model.hse.HseModel
 import raum.muchbeer.total.model.hse.Hsedata
 import raum.muchbeer.total.model.users.GrievanceCredentialEntity
 import raum.muchbeer.total.model.users.UserModel
+import raum.muchbeer.total.model.vehicle.VehicleModel
+import raum.muchbeer.total.model.vehicle.VehicleState
+import raum.muchbeer.total.model.vehicle.VehiclesData
+import raum.muchbeer.total.model.vehicle.request.ReceiveVehicle
+import raum.muchbeer.total.model.vehicle.request.RequestVehicleModel
+import raum.muchbeer.total.model.vehicle.request.Vehicle
 import raum.muchbeer.total.repository.datasource.DBGrievanceSource
 import raum.muchbeer.total.repository.datasource.DBPapUserSource
 import raum.muchbeer.total.repository.datasource.NetDataSource
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -44,6 +50,8 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                                       @Named("hse") val hseService: DataService,
                                       @Named("engage") val engageService : DataService,
                                       @Named("gravitee") val generalGriev : DataService,
+                                      @Named("requestvehicle") val requestVehicleService: DataService,
+                                      @Named("vehicle") val vehicleService : DataService,
                                       val userDataPref : UserDataPref
 ) {
 
@@ -77,6 +85,69 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
     }
      suspend fun receiveHseList() : List<Hsedata> {
         return dbGgriev.retrieveListHSe()
+    }
+     suspend fun insertVehicle(data: VehiclesData) : Long {
+         return dbGgriev.insertIntoVehicle(data)
+     }
+
+    suspend fun insertVehicleFieldData(vehiclesData: VehiclesData) {
+        val jsonDBListPretty: String = gsonPretty.toJson(vehiclesData)
+        Log.d("Repository", "Ping json vehicles data to give you ${jsonDBListPretty}")
+        val requestBody = jsonDBListPretty.toRequestBody("application/json".toMediaTypeOrNull())
+
+        try {
+            val response = vehicleService.sendVehicleDataToServer(requestBody)
+            if (response.isSuccessful) {
+                val gson2 = GsonBuilder().setPrettyPrinting()
+                    .create()
+                val prettyJson = gson2.toJson(
+                    JsonParser.parseString(response.body()?.string())
+                )
+                Log.d("Repository", "Retrieve response from Vehicles field Server ${prettyJson}")
+            }
+        }catch (e: Exception) {
+            Log.d("Repository", "Network after clicked engagementData error is ${e.message}")
+        }
+    }
+
+    val retrieveVehicledataLive = dbGgriev.retrieveLiveVehicle()
+
+    val displayVehicles = dbGgriev.retrieveLiveVehicleRequested()
+
+    suspend fun requestVehicle() : Flow<VehicleState<List<Vehicle>>> = flow {
+        val fieldId = sharedPreference.getString("field_id","2016")
+        emit(VehicleState.Loading)
+
+        val receiveVehicle = ReceiveVehicle("${BuildConfig.API_KEY_GRIEVANCE}",
+        "${fieldId}")
+
+        val jsonDBListPretty: String = gsonPretty.toJson(receiveVehicle)
+        Log.d("Repository", "Repository Vehicle json is : ${jsonDBListPretty}")
+
+        val requestBody = jsonDBListPretty.toRequestBody("application/json".toMediaTypeOrNull())
+
+        try {
+            val response = requestVehicleService.requestVehicleFromServer(requestBody)
+            if (response.isSuccessful) {
+                val prettyJson = gsonPretty.toJson(
+                    JsonParser.parseString(response.body()?.string())
+                )
+                val vehiclesModel = gson.fromJson(prettyJson, RequestVehicleModel::class.java)
+
+                if (vehiclesModel.status =="200") {
+                    Log.d("Repository", "The Desc success return Description ID is ${vehiclesModel.statusDesc}")
+
+
+                    val listOfVehicle : List<Vehicle> = vehiclesModel.vehicles
+                    dbGgriev.insertIntoListVehicleRequested(listOfVehicle)
+                    emit(VehicleState.Success(listOfVehicle))
+                }
+            }
+        }catch(e : IOException) {
+            Log.d("Repository", "error after login is vehicles Description is ${e.message}")
+            emit(VehicleState.Error(e.message.toString()))
+        }
+
     }
 
     suspend fun executeLogin(credentialEntity: GrievanceCredentialEntity) : Flow<DataState<UserModel>> = flow {
@@ -121,6 +192,62 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         }catch (e: Exception) {
             Log.d("Repository", "error after login is clicked is ${e.message}")
                      emit(DataState.ErrorException(e))        }
+    }
+
+    suspend fun receivePapList( papListModel: PapEntity) {
+
+        //   emit(PapListStateEvent.Loading)
+        val jsonDBListPretty: String = gsonPretty.toJson(papListModel)
+        Log.d("Repository", "Pink the login credential by get field ID${jsonDBListPretty}")
+
+        // Create RequestBody ( We're not using any converter, like GsonConverter, MoshiConverter e.t.c, that's why we use RequestBody )
+        val requestBody = jsonDBListPretty.toRequestBody("application/json".toMediaTypeOrNull())
+
+        try {
+            val response = paplistService.sendData(requestBody)
+            if (response.isSuccessful) {
+                Log.d("Repository", "RetrieveData function clicked and paplist successful sent:")
+
+                // Convert raw JSON to pretty JSON using GSON library
+                val gson2 = GsonBuilder().setPrettyPrinting()
+                    .excludeFieldsWithoutExposeAnnotation()
+                    .create()
+                val prettyJson = gson2.toJson(
+                    JsonParser.parseString(response.body()?.string())
+                )
+
+                val jsonObject = JSONObject(prettyJson)
+                val jsonArray = jsonObject.getJSONArray("paplist")
+                Log.d("Repository", "paplist are : ${jsonArray}")
+                for (i in 0 until jsonArray.length()) {
+                    val val_id = "${jsonArray.getJSONObject(i).getString("valuation_number")}"
+                    val papName =  "${jsonArray.getJSONObject(i).getString("full_name")}"
+                    //   userDataPref.storeValuationId("${val_id}")
+
+
+                    val papEntry = PapEntryListModel("${jsonArray.getJSONObject(i).getString("valuation_number")}",
+                        "${jsonArray.getJSONObject(i).getString("full_name")}",
+                        "${jsonArray.getJSONObject(i).getString("phone_number")}",
+                        "${jsonArray.getJSONObject(i).getString("district")}",
+                        "${jsonArray.getJSONObject(i).getString("region")}")
+
+                    val checkRecord =  dbSource.insertSinglePap(papEntry)
+                    if(checkRecord>-1) {
+                        PapListStateEvent.getListOfPap(papEntry)
+                        Log.d("Repository", "Record inserted successfull")
+                    }
+                    Log.d("Repository", "value of name user: ${jsonArray.getJSONObject(i).getString("valuation_number")}")
+                }
+
+                val user = gsonPretty.fromJson(prettyJson, PapEntryModel::class.java)
+                Log.d("Repository", "PapListItem Item is : ${user.statusDesc}")
+
+            }
+
+        }catch (e: Exception) {
+            Log.d("Repository", "Network after clicked retrievedData error is ${e.message}")
+            PapListStateEvent.Error(e.toString())
+        }
     }
 
     suspend fun insertGrievanceToserver(agriev : AgrienceModel) {
@@ -193,61 +320,6 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         }
     }
 
-    suspend fun receivePapList( papListModel: PapEntity) {
-
-     //   emit(PapListStateEvent.Loading)
-        val jsonDBListPretty: String = gsonPretty.toJson(papListModel)
-        Log.d("Repository", "Pink the login credential by get field ID${jsonDBListPretty}")
-
-        // Create RequestBody ( We're not using any converter, like GsonConverter, MoshiConverter e.t.c, that's why we use RequestBody )
-        val requestBody = jsonDBListPretty.toRequestBody("application/json".toMediaTypeOrNull())
-
-        try {
-            val response = paplistService.sendData(requestBody)
-            if (response.isSuccessful) {
-                Log.d("Repository", "RetrieveData function clicked and paplist successful sent:")
-
-                // Convert raw JSON to pretty JSON using GSON library
-                val gson2 = GsonBuilder().setPrettyPrinting()
-                    .excludeFieldsWithoutExposeAnnotation()
-                    .create()
-                val prettyJson = gson2.toJson(
-                    JsonParser.parseString(response.body()?.string())
-                )
-
-                val jsonObject = JSONObject(prettyJson)
-                val jsonArray = jsonObject.getJSONArray("paplist")
-                Log.d("Repository", "paplist are : ${jsonArray}")
-                for (i in 0 until jsonArray.length()) {
-                    val val_id = "${jsonArray.getJSONObject(i).getString("valuation_number")}"
-                  val papName =  "${jsonArray.getJSONObject(i).getString("full_name")}"
-                  //   userDataPref.storeValuationId("${val_id}")
-
-
-                    val papEntry = PapEntryListModel("${jsonArray.getJSONObject(i).getString("valuation_number")}",
-                        "${jsonArray.getJSONObject(i).getString("full_name")}",
-                        "${jsonArray.getJSONObject(i).getString("phone_number")}",
-                        "${jsonArray.getJSONObject(i).getString("district")}",
-                        "${jsonArray.getJSONObject(i).getString("region")}")
-
-                    val checkRecord =  dbSource.insertSinglePap(papEntry)
-                    if(checkRecord>-1) {
-                        PapListStateEvent.getListOfPap(papEntry)
-                        Log.d("Repository", "Record inserted successfull")
-                    }
-                    Log.d("Repository", "value of name user: ${jsonArray.getJSONObject(i).getString("valuation_number")}")
-                }
-
-                val user = gsonPretty.fromJson(prettyJson, PapEntryModel::class.java)
-                Log.d("Repository", "PapListItem Item is : ${user.statusDesc}")
-
-            }
-
-        }catch (e: Exception) {
-            Log.d("Repository", "Network after clicked retrievedData error is ${e.message}")
-            PapListStateEvent.Error(e.toString())
-        }
-    }
 
     suspend fun insertToCgrienvance(grievanceModel: CgrievanceModel) : Long {
        return dbGgriev.insertSingleCGrievEntries(grievanceModel)

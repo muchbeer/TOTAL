@@ -7,6 +7,8 @@ import raum.muchbeer.total.model.grievance.BpapDetailModel
 import raum.muchbeer.total.model.grievance.CgrievanceModel
 import raum.muchbeer.total.model.grievance.DattachmentModel
 import raum.muchbeer.total.model.hse.Hsedata
+import raum.muchbeer.total.model.vehicle.VehiclesData
+import raum.muchbeer.total.model.vehicle.request.Vehicle
 
 interface DBGrievanceSource {
 
@@ -60,4 +62,19 @@ interface DBGrievanceSource {
     fun retrieveLiveEngagement() : LiveData<List<EngageModel>>
 
     suspend fun retrieveListEngagement() : List<EngageModel>
+
+    //********************VEHICLE
+    suspend fun insertIntoVehicle(data : VehiclesData) : Long
+
+    fun retrieveLiveVehicle() : LiveData<List<VehiclesData>>
+
+    suspend fun retrieveListVehicle() : List<VehiclesData>
+
+    //********************REQUESTED VEHICLE
+  //  suspend fun insertIntoVehicle(data : VehiclesData) : Long
+
+    fun retrieveLiveVehicleRequested() : LiveData<List<Vehicle>>
+
+    suspend fun insertIntoListVehicleRequested(data: List<Vehicle>)
+
 }

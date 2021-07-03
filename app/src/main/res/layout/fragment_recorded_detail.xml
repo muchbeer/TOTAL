@@ -86,7 +86,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Recommendation:  "
+                        android:text="Advisory Remark:  "
                         android:textSize="24dp" />
 
                     <TextView
@@ -189,6 +189,62 @@
                         android:layout_height="wrap_content"
                         tools:text="yes"
                         android:textSize="24dp" />
+                </LinearLayout>
+
+
+                <View
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/holo_blue_dark" />
+
+                <LinearLayout
+                    android:paddingTop="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Enquire Type:    "
+                        android:textSize="25dp" />
+
+                    <TextView
+                        android:id="@+id/inquireType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="yes"
+                        android:textSize="25dp" />
+                </LinearLayout>
+
+
+                <View
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/holo_blue_dark" />
+
+                <LinearLayout
+                    android:paddingTop="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Grievance Theme:    "
+                        android:textSize="25dp" />
+
+                    <TextView
+                        android:id="@+id/grievanceTheme"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="yes"
+                        android:textSize="25dp" />
                 </LinearLayout>
 
 

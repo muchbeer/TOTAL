@@ -48,9 +48,9 @@ class SelectionFormFragment : Fragment() {
             else binding.hidesatisfyContract.visibility = View.GONE})
 
         selectionViewModel.inputRecommendation.observe(viewLifecycleOwner, { recommend->
-            if(recommend=="No") binding.hideReconmmend.visibility= View.VISIBLE
+            if(recommend=="No") binding.hideReconmmend.visibility= View.GONE
             else if (recommend=="   ") binding.hideReconmmend.visibility = View.GONE
-            else binding.hideReconmmend.visibility = View.GONE
+            else binding.hideReconmmend.visibility = View.VISIBLE
         })
     }
 

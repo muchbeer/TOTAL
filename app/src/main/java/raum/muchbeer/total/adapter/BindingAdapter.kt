@@ -66,6 +66,20 @@ fun listenSatisfyContract(spinner: AppCompatSpinner, result: ObservableField<Str
     }
 }
 
+@BindingAdapter("inquiryType")
+fun listenEnquiryType(spinner: AppCompatSpinner, result: ObservableField<String>) {
+    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+
+        }
+
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            result.set(parent?.getItemAtPosition(position) as String)
+        }
+    }
+}
+
+
 @BindingAdapter("recommendation")
 fun listenRecommendation(spinner: AppCompatSpinner, result: ObservableField<String>) {
     spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -132,6 +146,18 @@ fun listenToSecuritiesisueEntrie(spinner: AppCompatSpinner, result: ObservableFi
     }
 }
 
+@BindingAdapter("areaLocation")
+fun listenToAreaLocation(spinner: AppCompatSpinner, result: ObservableField<String>) {
+    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+
+        }
+
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            result.set(parent?.getItemAtPosition(position) as String)
+        }
+    }
+}
 
 @BindingAdapter("commentForSecuirity")
 fun listenToSecurityComment(editText: EditText, result: ObservableField<String>) {
@@ -178,5 +204,20 @@ fun listenListOfParticipantValue(editText: EditText, result: ObservableField<Str
 
 @BindingAdapter("keypoint")
 fun listenKeyPointValue(editText: EditText, result: ObservableField<String>) {
+    result.set(editText.text.toString())
+}
+
+@BindingAdapter("toolboxcomment")
+fun listenToolboxCommentValue(editText: EditText, result: ObservableField<String>) {
+    result.set(editText.text.toString())
+}
+
+@BindingAdapter("distanceCovered")
+fun listenDistanceCoveredValue(editText: EditText, result: ObservableField<String>) {
+    result.set(editText.text.toString())
+}
+
+@BindingAdapter("hoursCovered")
+fun listenToHoursCovered(editText: EditText, result: ObservableField<String>) {
     result.set(editText.text.toString())
 }

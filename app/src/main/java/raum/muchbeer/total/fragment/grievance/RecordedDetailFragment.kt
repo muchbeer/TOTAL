@@ -29,6 +29,8 @@ class RecordedDetailFragment : Fragment() {
         binding.recommednation.text = grievanceDetailArgs.anyrecomendations
         binding.noRecommendation.text = grievanceDetailArgs.recomendations
         binding.status.text = grievanceDetailArgs.gstatus
+        binding.grievanceTheme.text = grievanceDetailArgs.grievancetype
+        binding.inquireType.text = grievanceDetailArgs.inquirytype
          return binding.root
     }
 

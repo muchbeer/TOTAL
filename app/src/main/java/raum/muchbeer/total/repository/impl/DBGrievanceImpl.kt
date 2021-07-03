@@ -7,17 +7,20 @@ import raum.muchbeer.total.db.grievancedao.BpapDetailDao
 import raum.muchbeer.total.db.grievancedao.CgrievanceDao
 import raum.muchbeer.total.db.grievancedao.DattachDao
 import raum.muchbeer.total.db.hsedao.HseDao
+import raum.muchbeer.total.db.vehicledao.VehicleDao
 import raum.muchbeer.total.model.engagement.EngageModel
 import raum.muchbeer.total.model.grievance.AgrienceModel
 import raum.muchbeer.total.model.grievance.BpapDetailModel
 import raum.muchbeer.total.model.grievance.CgrievanceModel
 import raum.muchbeer.total.model.grievance.DattachmentModel
 import raum.muchbeer.total.model.hse.Hsedata
+import raum.muchbeer.total.model.vehicle.VehiclesData
+import raum.muchbeer.total.model.vehicle.request.Vehicle
 import raum.muchbeer.total.repository.datasource.DBGrievanceSource
 
 class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : BpapDetailDao,
                       val cGrievEntrDao: CgrievanceDao, val dAttachDao : DattachDao, val hseDao: HseDao,
-                      val engageDao : EngagementDao
+                      val engageDao : EngagementDao, val vehiclesDao: VehicleDao
 ) : DBGrievanceSource {
 
 
@@ -92,4 +95,21 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
 
     override suspend fun retrieveListEngagement(): List<EngageModel> {
       return engageDao.retrievEngageList()   }
+
+    override suspend fun insertIntoVehicle(data: VehiclesData): Long {
+        return vehiclesDao.insertSingleVehicle(data)
+    }
+
+    override fun retrieveLiveVehicle(): LiveData<List<VehiclesData>> {
+     return vehiclesDao.retrieveVehicle()   }
+
+    override suspend fun retrieveListVehicle(): List<VehiclesData> {
+     return vehiclesDao.retrieveList()   }
+
+    override fun retrieveLiveVehicleRequested(): LiveData<List<Vehicle>> {
+        return vehiclesDao.retrieveVehicleRequested()
+    }
+
+    override suspend fun insertIntoListVehicleRequested(data: List<Vehicle>) {
+     return vehiclesDao.insertRequestedVehicles(data)    }
 }

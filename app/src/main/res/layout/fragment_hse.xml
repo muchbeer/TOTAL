@@ -62,6 +62,27 @@
                 android:layout_height="1dp"
                 android:background="@android:color/holo_blue_dark" />
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/toolboxComment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/edit_values"
+                android:hint="Comment on toolbox"
+                android:padding="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="25dp"
+                    app:toolboxcomment="@{viewModel.observeCommentOnToolbox}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/hidesatisfyContract"
@@ -134,7 +155,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:startIconDrawable="@drawable/edit_values"
-                android:hint="Reasons "
+                android:hint="Explain "
                 android:padding="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -212,6 +233,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
+                android:onClick="@{()->viewModel.insertToHSE()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

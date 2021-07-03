@@ -20,10 +20,8 @@ data class EngageModel(
     val number_of_participants: String,
     @SerializedName("user_name")
     val user_name: String,
-    @SerializedName("village")
-    val village: String,
-    @SerializedName("ward")
-    val ward: String,
+     @SerializedName("locationtype")
+     val locationtype : String,
     @PrimaryKey(autoGenerate = false)
     @SerializedName("primary_key")
     val primary_key : String

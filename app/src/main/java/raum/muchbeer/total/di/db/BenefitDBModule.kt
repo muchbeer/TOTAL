@@ -10,6 +10,7 @@ import raum.muchbeer.total.db.DataDB
 import raum.muchbeer.total.db.engagedao.EngagementDao
 import raum.muchbeer.total.db.grievancedao.*
 import raum.muchbeer.total.db.hsedao.HseDao
+import raum.muchbeer.total.db.vehicledao.VehicleDao
 import javax.inject.Singleton
 
 
@@ -59,4 +60,9 @@ class BenefitDBModule {
     @Provides
     fun provideEngagement(dataBD: DataDB) : EngagementDao {
         return dataBD.EngageDao()      }
+
+    @Singleton
+    @Provides
+    fun provideVehicles(dataBD: DataDB) : VehicleDao {
+        return dataBD.VehicleDao()      }
 }

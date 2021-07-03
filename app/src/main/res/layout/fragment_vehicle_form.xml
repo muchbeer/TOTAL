@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+            <variable
+                name="viewModel"
+                type="raum.muchbeer.total.viewmodel.VehicleViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragment.hse.VehicleFormFragment">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_marginTop="30dp"
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:text="Vehicles"
+                android:textSize="33dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_marginBottom="40dp"
+                android:id="@+id/distanceCovered"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/edit_values"
+                android:hint="Distance Covered (km)"
+                android:padding="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="25dp"
+                    android:inputType="number"
+                    app:distanceCovered="@{viewModel.observeDistanceCovered}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/accomodation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/edit_values"
+                android:hint="Hours Covered"
+                android:padding="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:textSize="25dp"
+                    app:hoursCovered="@{viewModel.observeHoursTraveled}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark" />
+
+<Button
+    android:paddingTop="40dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:onClick="@{()-> viewModel.insertToVehicles()}"
+    android:textSize="30dp"
+    android:text="Save Record"
+    android:padding="20dp"/>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -92,4 +92,25 @@ class DataRetroInstance {
             .create(DataService::class.java)
     }
 
+    fun sendVehicleToServer() : DataService {
+        Log.i("Grievance", "The application has access the Grievance")
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL_VEHICLE_ENTRY)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
+            .build()
+            .create(DataService::class.java)
+    }
+
+    fun requestVehicleFromServer() : DataService {
+        Log.i("Grievance", "The application has access the Grievance")
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL_VEHICLE_REQUEST_ENTRY)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
+            .build()
+            .create(DataService::class.java)
+    }
+
+
 }

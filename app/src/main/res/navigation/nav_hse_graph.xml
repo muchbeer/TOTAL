@@ -14,5 +14,18 @@
         android:id="@+id/vehicleFragment"
         android:name="raum.muchbeer.total.fragment.hse.VehicleFragment"
         android:label="VEHICLE"
-        tools:layout="@layout/fragment_vehicle" />
+        tools:layout="@layout/fragment_vehicle" >
+        <action
+            android:id="@+id/action_vehicleFragment_to_vehicleFormFragment"
+            app:destination="@id/vehicleFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/vehicleFormFragment"
+        android:name="raum.muchbeer.total.fragment.hse.VehicleFormFragment"
+        android:label="fragment_vehicle_form"
+        tools:layout="@layout/fragment_vehicle_form" >
+        <argument
+            android:name="vehicleDetails"
+            app:argType="raum.muchbeer.total.model.vehicle.request.Vehicle" />
+    </fragment>
 </navigation>

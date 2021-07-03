@@ -31,7 +31,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Grievance Form"
+                    android:text="Inquire Form"
                     android:padding="10dp"
                     android:gravity="center_horizontal"
                     android:layout_marginTop="8dp"
@@ -91,6 +91,37 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:textSize="20dp"
+                        android:layout_marginTop="20dp"
+                        android:text="Inquire Type: "/>
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/inquireType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="20dp"
+                        android:entries="@{viewModel.liveInquireType}"
+                        app:inquiryType="@{viewModel.userSelectInquiryType}"/>
+
+                </LinearLayout>
+                <View
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/holo_blue_dark"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <TextView
@@ -99,7 +130,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="23dp"
                         android:gravity="center"
-                        android:text="Grievance Form"/>
+                        android:text="Grievance theme"/>
 
                     <androidx.appcompat.widget.AppCompatCheckBox
                         android:id="@+id/land"
@@ -177,9 +208,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="8dp"
-                            android:textSize="20dp"
+                            android:textSize="16dp"
                             android:layout_marginTop="20dp"
-                            android:text="Satisfy Contract: "/>
+                            android:text="Satisfy with Contract: "/>
 
                         <androidx.appcompat.widget.AppCompatSpinner
                             android:id="@+id/satisfyContractSpinner"
@@ -226,9 +257,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="8dp"
-                            android:textSize="20dp"
+                            android:textSize="17dp"
                             android:layout_marginTop="16dp"
-                            android:text="Recomendation: "/>
+                            android:text="Advisors remark: "/>
 
                         <androidx.appcompat.widget.AppCompatSpinner
                             android:id="@+id/spinerDistrict"
@@ -244,7 +275,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:startIconDrawable="@drawable/edit_values"
-                        android:hint="Recommendations"
+                        android:hint="Remark's"
                         android:padding="10dp">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -290,7 +321,9 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/gg">
                     <Button
+                        android:layout_marginTop="30dp"
                         android:id="@+id/next"
+                        android:padding="16dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"

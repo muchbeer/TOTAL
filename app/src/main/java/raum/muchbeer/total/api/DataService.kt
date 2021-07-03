@@ -38,4 +38,16 @@ interface DataService {
     )    @POST(".")
     suspend fun sendEngageDataToServer(@Body requestData: RequestBody) : Response<ResponseBody>
 
+    @Headers(
+        "Accept: application/json",
+        "Content-type:application/json"
+    )    @POST(".")
+    suspend fun sendVehicleDataToServer(@Body requestData: RequestBody) : Response<ResponseBody>
+
+    @Headers(
+        "Accept: application/json",
+        "Content-type:application/json"
+    )    @POST(".")
+    suspend fun requestVehicleFromServer(@Body requestData: RequestBody) : Response<ResponseBody>
+
 }

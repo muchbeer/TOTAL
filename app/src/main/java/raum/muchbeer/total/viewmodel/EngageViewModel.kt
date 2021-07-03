@@ -28,20 +28,17 @@ class EngageViewModel @Inject constructor( val repository: Repository,
     val checkEngageData : LiveData<String>
         get() = _checkEngageData
 
-    private var _inputWard = MutableLiveData<String>()
-    val observeWard = ObservableField<String>().apply {
-        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                _inputWard.value = get()
-            }
-        })
+    var liveAreaLevel = mutableListOf<String>()
+
+    init {
+        liveAreaLevel = mutableListOf("   ","Regional", "District", "Ward", "Village")
     }
 
-    private var _inputVillage = MutableLiveData<String>()
-    val observeVillage = ObservableField<String>().apply {
-        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+    private var _selectAreaLocation = MutableLiveData<String>()
+    val userSelectArea = ObservableField<String>().apply {
+        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback(){
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                _inputVillage.value = get()
+                _selectAreaLocation.value = get()
             }
         })
     }
@@ -90,7 +87,8 @@ class EngageViewModel @Inject constructor( val repository: Repository,
                 "${field_id}", "${_inputKeypoint.value}",
                 "${_inputListParticipant.value}", "${_inputMeetingTime.value}",
                 "${_inputNoParticipant.value}", "${user_name}",
-               "${_inputVillage.value}", "${_inputWard.value}", "${randomNumber}")
+               "${_selectAreaLocation.value}",  "${randomNumber}"
+        )
 
         val engageCheck = repository.insertToEngagement(engageModel)
         if (engageCheck >-1) {

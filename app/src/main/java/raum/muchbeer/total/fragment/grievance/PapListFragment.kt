@@ -42,11 +42,10 @@ class PapListFragment : Fragment() {
     }
 
    private fun callFunctionAndRetrieveData() {
-
        val sharedPreference =  requireContext().getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
        var editor = sharedPreference.edit()
 
-       binding.fab.setOnClickListener {
+      binding.fab.setOnClickListener {
                 viewModel.onFabClicked()
        }
        viewModel.receiveListOfPaps.observe(viewLifecycleOwner, Observer {

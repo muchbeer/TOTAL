@@ -34,42 +34,29 @@
                 android:textSize="33dp" />
 
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/ward"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:startIconDrawable="@drawable/edit_values"
-                android:hint="Ward"
-                android:padding="10dp">
+                android:orientation="horizontal">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="25dp"
-                    app:ward="@{viewModel.observeWard}" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:textSize="20dp"
+                    android:padding="8dp"
+                    android:layout_marginTop="18dp"
+                    android:text="Select Area: " />
 
-            <View
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/holo_blue_dark" />
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/selectArea"
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="18dp"
+                    android:entries="@{viewModel.liveAreaLevel}"
+                    app:areaLocation="@{viewModel.userSelectArea}" />
+            </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/village"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:startIconDrawable="@drawable/edit_values"
-                android:hint="Village"
-                android:padding="10dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="25dp"
-                    app:village="@{viewModel.observeVillage}" />
-            </com.google.android.material.textfield.TextInputLayout>
             <View
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"

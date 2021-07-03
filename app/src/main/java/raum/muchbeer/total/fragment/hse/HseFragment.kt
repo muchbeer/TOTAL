@@ -27,13 +27,33 @@ class HseFragment : Fragment() {
         // Inflate the layout for this fragment
 
         binding = FragmentHseBinding.inflate(inflater)
+
+        binding.viewModel = viewModel
+        binding.lifecycleOwner= this
+     //   viewModel.insertToHSE()
         viewModel.checkHseData.observe(requireActivity(), {
             if(it =="Success") {
                 Toast.makeText(requireContext(), "Database inserted", Toast.LENGTH_LONG).show()
             }
         })
-        return  inflater.inflate(R.layout.fragment_hse, container, false)
+
+        hideTextEdit()
+        return  binding.root
     }
 
 
+    private fun hideTextEdit() {
+        viewModel.selectIncidence.observe(viewLifecycleOwner, { isIncident ->
+            if (isIncident == "Yes") binding.commentForIncidence.visibility = View.VISIBLE
+            else if (isIncident == "   ") binding.commentForIncidence.visibility = View.GONE
+            else binding.commentForIncidence.visibility = View.GONE
+        })
+
+        viewModel.selectSecurities.observe(viewLifecycleOwner, { anySecurityIssue ->
+            if (anySecurityIssue == "Yes") binding.comentForSecurityisue.visibility = View.VISIBLE
+            else if (anySecurityIssue == "   ") binding.comentForSecurityisue.visibility = View.GONE
+            else binding.comentForSecurityisue.visibility = View.GONE
+        })
+
+    }
 }

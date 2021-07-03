@@ -53,6 +53,8 @@ class FinalViewModel @Inject constructor(val repository: Repository,
     fun displayFormFilling(grievance: CgrievanceModel) {  _navigateToRecordDetailFragment.value = grievance   }
 
 
+    fun displayComplete() {    _navigateToRecordDetailFragment.value = null    }
+
     fun viewInformation() = viewModelScope.launch {
       val attachment =  repository.retrieveAttachment()
         val cGrievance = repository.retrieveCgrievance()

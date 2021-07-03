@@ -4,10 +4,12 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import raum.muchbeer.total.db.vehicledao.VehicleDao
 import raum.muchbeer.total.model.grievance.BpapDetailModel
 import raum.muchbeer.total.model.grievance.CgrievanceModel
 import raum.muchbeer.total.model.grievance.DattachmentModel
 import raum.muchbeer.total.model.hse.Hsedata
+import raum.muchbeer.total.model.vehicle.VehiclesData
 import java.lang.reflect.Type
 
 class Converters {
@@ -108,4 +110,30 @@ class Converters {
 
         return listAttached
     }
+
+
+    //******************************vehicles*******************88
+    @TypeConverter
+    fun vehiclesDataToJson(listOfVehicle: List<VehicleDao>): String {
+        val gson = Gson()
+
+        if (listOfVehicle.isNullOrEmpty()) return ""
+
+        val papIDJson = gson.toJson(listOfVehicle)
+        return papIDJson
+    }
+
+    @TypeConverter
+    fun vehicleDataJsonToModel(jsonVehicleDetail: String): List<VehiclesData> {
+        val gson = Gson()
+
+        if (jsonVehicleDetail.isNullOrEmpty()) return emptyList()
+
+        val type: Type = object : TypeToken<List<VehiclesData?>?>() {}.type
+        val vehiclelistEntries: List<VehiclesData> =
+            Gson().fromJson<List<VehiclesData>>(jsonVehicleDetail)
+
+        return vehiclelistEntries
+    }
+
 }

@@ -21,7 +21,7 @@
         android:id="@+id/selectFragment"
         android:name="raum.muchbeer.total.fragment.grievance.SelectionFormFragment"
         android:label="ENTRIES"
-        tools:layout="@layout/fragment_select" >
+        tools:layout="@layout/fragment_form" >
         <action
             android:id="@+id/action_selectFragment_to_photoFragment"
             app:destination="@id/photoFragment" />

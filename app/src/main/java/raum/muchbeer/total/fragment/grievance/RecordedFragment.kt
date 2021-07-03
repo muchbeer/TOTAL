@@ -32,6 +32,7 @@ binding = FragmentRecordedBinding.inflate(inflater)
 
         adapter = GrievanceAdapter(OnGrievanceClickListener {
             viewModel.displayFormFilling(it)
+            viewModel.displayComplete()
         })
 
         binding.recyclerViewRecorded.adapter = adapter

@@ -32,14 +32,19 @@ class HseViewModel @Inject constructor(val repository: Repository,
 
     private val _selectToolbox = MutableLiveData<String>()
     private val _selectIncidence = MutableLiveData<String>()
+      val selectIncidence : LiveData<String>
+            get() = _selectIncidence
+
     private val _selectSecurity = MutableLiveData<String>()
+        val selectSecurities : LiveData<String>
+            get() = _selectSecurity
 
 
     init {
 
         liveToolboxs = mutableListOf("   ","Safety", "Healthy")
         liveifAnyIncidenceOccur = mutableListOf("   ","Yes", "No")
-        liveifSecurityOccur = mutableListOf("    ", "Yes", "No")
+        liveifSecurityOccur = mutableListOf("   ", "Yes", "No")
     }
 
     val userSelectSecurity = ObservableField<String>().apply {
@@ -71,6 +76,15 @@ class HseViewModel @Inject constructor(val repository: Repository,
         addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                 _inputInspection.value = get()
+            }
+        })
+    }
+
+    private var _inputCommentOnToolbox = MutableLiveData<String>()
+    val observeCommentOnToolbox = ObservableField<String>().apply {
+        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                _inputCommentOnToolbox.value = get()
             }
         })
     }
@@ -111,6 +125,7 @@ class HseViewModel @Inject constructor(val repository: Repository,
         })
     }
 
+
     fun insertToHSE()  =  viewModelScope.launch{
         val randomNumber = (100..200000).random()
         val sdf = SimpleDateFormat("yyyy-M-dd hh:mm:ss")
@@ -120,7 +135,7 @@ class HseViewModel @Inject constructor(val repository: Repository,
         "${_selectSecurity.value}", "${_inputInspection.value}",
             "${_selectIncidence.value}", "${_inputCommentForIncidence.value}",
         "${randomNumber}", "${currentDate}", "${_inputCommentForSecurity.value}",
-        "${_selectToolbox.value}")
+        "${_selectToolbox.value}", "${_inputCommentOnToolbox.value}")
 
         val checkHseData = repository.insertToHse(hseData)
         if (checkHseData > -1) {

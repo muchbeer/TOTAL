@@ -64,6 +64,7 @@ class SampleVM @Inject constructor(val repository: Repository,
     var liveSatisfyContract = mutableListOf<String>()
     var liveEntriesStatus = mutableListOf<String>()
     var liveRecommendation = mutableListOf<String>()
+    var liveInquireType = mutableListOf<String>()
 
     //Photo input
     var _inputPhotoComment = MutableLiveData<String>()
@@ -81,7 +82,18 @@ class SampleVM @Inject constructor(val repository: Repository,
         liveSatisfyContract = mutableListOf("   ","Yes", "No")
         liveEntriesStatus = mutableListOf("    ", "Open", "In Progress", "Closes")
         liveRecommendation = mutableListOf("   ", "Yes", "No" )
+        liveInquireType = mutableListOf("   ", "Grievance", "Issue", "Query", "Concern")
     }
+
+        private var _inputInquiryType = MutableLiveData<String>()
+    val userSelectInquiryType = ObservableField<String>().apply {
+        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback(){
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                _inputInquiryType.value = get()
+            }
+        })
+    }
+
     val userSelectionAgreeToSign = ObservableField<String>().apply {
         addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback(){
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
@@ -194,7 +206,7 @@ class SampleVM @Inject constructor(val repository: Repository,
 
 
         val randomNumber = (100..200000).random()
-        val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
+        val sdf = SimpleDateFormat("yyyy-M-dd hh:mm:ss")
         val currentDate = sdf.format(Date())
 
         val full_name = sharedPreference.getString("full_name", "default")
@@ -210,7 +222,8 @@ class SampleVM @Inject constructor(val repository: Repository,
             "${currentDate}",
             "${_combineGrievanceType.value}",
             "${_inputCompasationComment.value}",
-            "${full_name}"
+            "${full_name}",
+            "${_inputInquiryType.value}"
         )
 
         Log.d("Grievance", "Griev Object is : ${cgrienvance}")
