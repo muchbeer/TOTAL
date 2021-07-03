@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/papListFragment">
+
+    <fragment
+        android:id="@+id/papListFragment"
+        android:name="raum.muchbeer.total.fragment.grievance.PapListFragment"
+        android:label="PAPS"
+        tools:layout="@layout/fragment_pap_list">
+        <action
+            android:id="@+id/action_papListFragment_to_selectFragment"
+            app:destination="@id/selectFragment" />
+        <argument
+            android:name="papListToselect"
+            app:argType="raum.muchbeer.total.model.grievance.papform.PapEntryListModel" />
+    </fragment>
+    <fragment
+        android:id="@+id/selectFragment"
+        android:name="raum.muchbeer.total.fragment.grievance.SelectionFormFragment"
+        android:label="ENTRIES"
+        tools:layout="@layout/fragment_select" >
+        <action
+            android:id="@+id/action_selectFragment_to_photoFragment"
+            app:destination="@id/photoFragment" />
+
+        <argument
+            android:name="papListToselect"
+            app:argType="raum.muchbeer.total.model.grievance.papform.PapEntryListModel" />
+    </fragment>
+    <fragment
+        android:id="@+id/photoFragment"
+        android:name="raum.muchbeer.total.fragment.grievance.PhotoFragment"
+        android:label="Photo"
+        tools:layout="@layout/fragment_photo">
+        <action
+            android:id="@+id/action_photoFragment_to_finalFragment"
+            app:destination="@id/finalFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/finalFragment"
+        android:name="raum.muchbeer.total.fragment.grievance.FinalFragment"
+        android:label="SEND DATA"
+        tools:layout="@layout/fragment_final" >
+        <action
+            android:id="@+id/action_finalFragment_to_papListFragment"
+            app:destination="@id/papListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recordedFragment"
+        android:name="raum.muchbeer.total.fragment.grievance.RecordedFragment"
+        android:label="Recorded"
+        tools:layout="@layout/recorded_list_item">
+        <action
+            android:id="@+id/action_recordedFragment_to_recordedDetailFragment"
+            app:destination="@id/recordedDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recordedDetailFragment"
+        android:name="raum.muchbeer.total.fragment.grievance.RecordedDetailFragment"
+        android:label="fragment_recorded_detail"
+        tools:layout="@layout/fragment_recorded_detail" >
+        <argument
+            android:name="recordedGrievance"
+            app:argType="raum.muchbeer.total.model.grievance.CgrievanceModel" />
+    </fragment>
+</navigation>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_hse_graph.xml"
+    app:startDestination="@id/hseFragment">
+
+    <fragment
+        android:id="@+id/hseFragment"
+        android:name="raum.muchbeer.total.fragment.hse.HseFragment"
+        android:label="HSE"
+        tools:layout="@layout/fragment_hse"/>
+    <fragment
+        android:id="@+id/vehicleFragment"
+        android:name="raum.muchbeer.total.fragment.hse.VehicleFragment"
+        android:label="VEHICLE"
+        tools:layout="@layout/fragment_vehicle" />
+</navigation>

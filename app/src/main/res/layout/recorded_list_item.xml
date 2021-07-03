@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+        <data>
+            <variable
+                name="grievanceEntry"
+                type="raum.muchbeer.total.model.grievance.CgrievanceModel" />
+
+            <variable
+                name="papViewModel"
+                type="raum.muchbeer.total.viewmodel.LoginViewModel" />
+
+       </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/card_view"
+        android:layout_marginTop="8dp"
+        app:cardBackgroundColor="#2BB4D6"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="5dp"
+        app:contentPadding="4dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:id="@+id/item_image"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/ic_baseline_person_24" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/item_title"
+                android:layout_toEndOf="@+id/item_image"
+                android:layout_toRightOf="@+id/item_image"
+                android:layout_alignParentTop="true"
+                android:textSize="30sp"
+                android:text="@{grievanceEntry.full_name}"
+                tools:text="George Msope"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/item_address"
+                tools:text="Kinyerezi mtaba"
+                android:text="@{grievanceEntry.reg_date}"
+                android:layout_toEndOf="@+id/item_image"
+                android:layout_toRightOf="@+id/item_image"
+                android:layout_below="@+id/item_title"
+                />
+
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

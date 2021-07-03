@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="raum.muchbeer.total.viewmodel.FinalViewModel" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/snack_display"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".fragment.FragmentFinal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textSize="30dp"
+            android:text="JSON FORMAT"/>
+
+
+        <Button
+            android:paddingTop="30dp"
+            android:id="@+id/saveRecords"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save Pap Record"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="30dp"
+            android:onClick="@{() -> viewModel.clearDatabase()}"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+
+            <TextView
+                android:id="@+id/display"
+                android:textSize="20dp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="George Muchbeer"/>
+
+
+        </ScrollView>
+
+    </LinearLayout>
+</layout>

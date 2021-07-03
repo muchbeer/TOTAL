@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="raum.muchbeer.total.viewmodel.HseViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragment.hse.HseFragment">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:text="HSE"
+                android:textSize="33dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:textSize="18dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Toolbox Topic: " />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/toolboxpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="20dp"
+                    android:entries="@{viewModel.liveToolboxs}"
+                    app:toolbox="@{viewModel.userSelectToolbox}" />
+
+            </LinearLayout>
+
+            <View
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark" />
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/hidesatisfyContract"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/edit_values"
+                android:hint="Car Inspection Report"
+                android:padding="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="25dp"
+                    app:inspection="@{viewModel.observeInspectionReport}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/accomodation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/edit_values"
+                android:hint="Accomodation"
+                android:padding="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="25dp"
+                    app:accomodation="@{viewModel.observeAccomodation}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:padding="8dp"
+                    android:layout_marginTop="18dp"
+                    android:text="Any Incidate: " />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/appCompatSpinner"
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="18dp"
+                    android:entries="@{viewModel.liveifAnyIncidenceOccur}"
+                    app:anyincidence="@{viewModel.userSelectIncidence}" />
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/commentForIncidence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/edit_values"
+                android:hint="Reasons "
+                android:padding="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="25dp"
+                    app:commentForIncidence="@{viewModel.observeCommentForIncidence}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:padding="8dp"
+                    android:layout_marginTop="18dp"
+                    android:text="Securities Issue: " />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/security_issue"
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="18dp"
+                    android:entries="@{viewModel.liveifSecurityOccur}"
+                    app:anySecurities="@{viewModel.userSelectSecurity}" />
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/comentForSecurityisue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/edit_values"
+                android:hint="Reasons "
+                android:padding="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="25dp"
+                    app:commentForSecuirity="@{viewModel.observeCommentForSecurity}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <View
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark" />
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/observation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/edit_values"
+                android:hint="Observation"
+                android:padding="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="25dp"
+                    app:observation="@{viewModel.observeObservation}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Save Hse"/>
+        </LinearLayout> </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
