@@ -8,9 +8,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
+import raum.muchbeer.total.BuildConfig
+import raum.muchbeer.total.model.hse.HseModel
 import raum.muchbeer.total.model.hse.Hsedata
 import raum.muchbeer.total.repository.Repository
 import java.text.SimpleDateFormat
@@ -22,6 +25,8 @@ class HseViewModel @Inject constructor(val repository: Repository,
                                        @ApplicationContext context: Context)
     : ViewModel(){
 
+    val sharedPreference =  context.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
+    val gsonPretty = GsonBuilder().setPrettyPrinting().create()
     private var _checkhseData = MutableLiveData<String>()
         val checkHseData : LiveData<String>
             get() = _checkhseData
@@ -125,6 +130,46 @@ class HseViewModel @Inject constructor(val repository: Repository,
         })
     }
 
+    fun insertToHSEModelDB() = viewModelScope.launch {
+        val randomNumber = (100..200000).random()
+        val sdf = SimpleDateFormat("yyyy-M-dd hh:mm:ss")
+        val currentDate = sdf.format(Date())
+
+        val hseData = Hsedata("${_inputAccomodation.value}", "${_inputObservation.value}",
+            "${_selectSecurity.value}", "${_inputInspection.value}",
+            "${_selectIncidence.value}", "${_inputCommentForIncidence.value}",
+            "${randomNumber}", "${currentDate}", "${_inputCommentForSecurity.value}",
+            "${_selectToolbox.value}", "${_inputCommentOnToolbox.value}")
+
+        repository.insertToHseDataFirst(hseData)
+
+        val returnhseData = repository.retrieveSingleHse()
+        val jsonCGrev = gsonPretty.toJson(returnhseData)
+
+        val jsonDBListPretty: String = gsonPretty.toJson(hseData)
+        Log.d("Repository", "Pink the login credential by get field ID${jsonDBListPretty}")
+        val fieldId = sharedPreference.getString("field_id","2016")
+        val username = sharedPreference.getString("username", "default")
+        val hseModel = HseModel("${BuildConfig.API_KEY_GRIEVANCE}", "${fieldId}",
+            "${username}", "${randomNumber}",
+            listOf(returnhseData))
+
+        val checkHseModel = repository.insertToHseModel(hseModel)
+        if (checkHseModel >-1) {
+            Log.d("HSeViewModel", "Successful entered to database HSE")
+            _checkhseData.value = "Success"
+
+         //   repository.insertHseModelToServer(hseModel)
+        }
+    }
+
+    fun checkDataRetrieve() = viewModelScope.launch {
+        repository.retrieveHseSingleList().forEach {
+            Log.d("HSeViewModel", "RetrieveData is : ${it.reg_date}")
+        }
+    }
+
+    val retrieveHseLive = repository.retrieveHseDataLive
 
     fun insertToHSE()  =  viewModelScope.launch{
         val randomNumber = (100..200000).random()
@@ -142,6 +187,6 @@ class HseViewModel @Inject constructor(val repository: Repository,
             Log.d("HSeViewModel", "Successful entered to database HSE")
             _checkhseData.value = "Success"
 
-            repository.insertHseToServer(hseData)
+           // repository.insertHseToServer(hseData)
         }
     }    }

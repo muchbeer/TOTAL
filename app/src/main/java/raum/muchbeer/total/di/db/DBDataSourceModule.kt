@@ -8,6 +8,7 @@ import raum.muchbeer.total.db.engagedao.EngagementDao
 import raum.muchbeer.total.db.grievancedao.*
 import raum.muchbeer.total.db.hsedao.HseDao
 import raum.muchbeer.total.db.vehicledao.VehicleDao
+import raum.muchbeer.total.repository.Repository
 import raum.muchbeer.total.repository.datasource.DBGrievanceSource
 import raum.muchbeer.total.repository.datasource.DBPapUserSource
 import raum.muchbeer.total.repository.impl.DBGrievanceImpl
@@ -32,5 +33,6 @@ object DBDataSourceModule {
     ) : DBGrievanceSource {
         return DBGrievanceImpl(grievDao, bGrievDetailDao, cGrievDao, dAttachDao,
             hseDao, engageDao, vehicleDao)    }
+
 
 }

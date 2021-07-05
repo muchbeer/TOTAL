@@ -1,6 +1,8 @@
 package raum.muchbeer.total.viewmodel
 
 import android.content.Context
+import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
@@ -28,7 +30,7 @@ import javax.inject.Inject
 class VehicleViewModel @Inject constructor (val repository: Repository,
                                             @ApplicationContext context: Context) : ViewModel(){
 
-    val sharedPreference =  context.getSharedPreferences("PREFERENCE_NAME",Context.MODE_PRIVATE)
+    val sharedPreference =  context.getSharedPreferences("PREFERENCE_VEHICLE", Context.MODE_PRIVATE)
 
     private val _navigateToFormFilling = MutableLiveData<Vehicle>()
     val navigateToFormFilling: LiveData<Vehicle>
@@ -78,6 +80,41 @@ class VehicleViewModel @Inject constructor (val repository: Repository,
 
     fun displayFormFilling(vehicleList: Vehicle) {  _navigateToFormFilling.value =vehicleList   }
 
+    fun insertToSingleVehicleModel() = viewModelScope.launch {
+        val randomNumber = (100..200000).random()
+        val sdf = SimpleDateFormat("yyyy-M-dd hh:mm:ss")
+        val currentDate = sdf.format(Date())
+        val vehicleNo =   sharedPreference.getString("vehicle_number", "default")
+        val user_name = sharedPreference.getString("username", "default")
+        val fielId = sharedPreference.getString("field_id", "default")
+
+        val vehicleData = VehiclesData("${_inputDistanceCovered.value}",
+            "${_inputHoursTravelled.value}",
+            "${randomNumber}", "${currentDate}",
+            "${vehicleNo}")
+
+    val checkVD =   repository.insertToSingleVehicleDataOG(vehicleData)
+
+       if (checkVD > -1) {
+           Log.d("ViewModelVehicel","VehicleModel saved: ${checkVD}")
+       }
+
+        val retrieveVD = repository.retriveFromSingleVehicleDataOG()
+        Log.d ("VehicleViewModel", "Retrieve USers are : ${retrieveVD}")
+        val vehicleModel = VehicleModel("${BuildConfig.API_KEY_GRIEVANCE}",
+                        "${fielId}", "${user_name}","${randomNumber}",
+                     listOf(retrieveVD))
+
+        val checkVehicleModel = repository.insertToSingleVehicle(vehicleModel)
+
+        if(checkVehicleModel >-1) {
+            _checkDataDB.value = "Success"
+         //   repository.insertVehicleModelToServer(vehicleModel)
+        }
+    }
+
+
+    val retrieveLiveVehicle = repository.retrieveVehicledataLive
     //save records to database
     fun insertToVehicles()  =  viewModelScope.launch{
         val randomNumber = (100..200000).random()

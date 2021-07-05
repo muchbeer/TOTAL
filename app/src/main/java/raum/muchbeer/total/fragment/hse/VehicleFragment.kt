@@ -41,8 +41,7 @@ class VehicleFragment : Fragment() {
     }
 
     private fun callFunctionAndRetrieveData() {
-        val sharedPreference =  requireContext().getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
-        var editor = sharedPreference.edit()
+
 
         viewModel.receiveVehicleRequested.observe(viewLifecycleOwner, {
             if (it != null) {
@@ -52,10 +51,6 @@ class VehicleFragment : Fragment() {
 
         viewModel.navigateToFormFilling.observe(viewLifecycleOwner, { vehicle ->
             if (vehicle !=null) {
-                editor.putString("vehicle_number","${vehicle.vehicle_number}")
-                editor.putString("drivers_name", "${vehicle.drivers_name}")
-                editor.putString("driver_phone_number", "${vehicle.driver_phone_number}" )
-
                findNavController().navigate(VehicleFragmentDirections.actionVehicleFragmentToVehicleFormFragment(vehicle))
             }
         })

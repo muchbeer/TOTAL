@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.navigation.Navigation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -15,6 +16,9 @@ class EngageActivity : AppCompatActivity() {
         setContentView(R.layout.activity_engage)
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        return Navigation.findNavController(this, R.id.fragment_host).navigateUp()
+    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.logout, menu)

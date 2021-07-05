@@ -44,15 +44,15 @@ import javax.inject.Singleton
 @Singleton
 class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                                       val dbSource: DBPapUserSource,
-                                      onlineDataSource : NetDataSource, @ApplicationContext val context: Context,
+                                      @ApplicationContext val context: Context,
                                       @Named("grievance") val grievanceService: DataService,
                                       @Named("paplist") val paplistService: DataService,
                                       @Named("hse") val hseService: DataService,
                                       @Named("engage") val engageService : DataService,
                                       @Named("gravitee") val generalGriev : DataService,
                                       @Named("requestvehicle") val requestVehicleService: DataService,
-                                      @Named("vehicle") val vehicleService : DataService,
-                                      val userDataPref : UserDataPref
+                                      @Named("vehicle") val vehicleService : DataService
+
 ) {
 
     val gson = Gson()
@@ -68,8 +68,16 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
 
     val hseDataLive = dbGgriev.retrieveLiveHSE()
 
+    fun sampleWorkerPass() {
+        Log.d("Repository", "This is to confirm that the worker is working at higher level ")
+    }
+
     suspend fun insertToHse(data: Hsedata) :Long {
         return dbGgriev.insertIntoHSE(data)
+    }
+
+    suspend fun insertToHseModel(data : HseModel) : Long {
+        return dbGgriev.insertIntoSingeHSEModel(data)
     }
 
     suspend fun insertToEngagement(data: EngageModel) : Long {
@@ -80,17 +88,45 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         return dbGgriev.retrieveListEngagement()
     }
 
-    suspend fun retrieveEngageLive() : LiveData<List<EngageModel>> {
-        return dbGgriev.retrieveLiveEngagement()
-    }
+    val retrieveEngageLive = dbGgriev.retrieveLiveEngagement()
+
      suspend fun receiveHseList() : List<Hsedata> {
         return dbGgriev.retrieveListHSe()
     }
+
      suspend fun insertVehicle(data: VehiclesData) : Long {
          return dbGgriev.insertIntoVehicle(data)
      }
 
-    suspend fun insertVehicleFieldData(vehiclesData: VehiclesData) {
+    suspend fun insertToSingleVehicle(data : VehicleModel) : Long {
+      return  dbGgriev.insertIntoVehicleModel(data)
+    }
+
+    suspend fun retrieveListOfVehicle() : List<VehicleModel> {
+        return dbGgriev.retrieveListVehicleModel()
+    }
+
+    suspend fun insertVehicleModelToServer(vehicleModel: VehicleModel) {
+        val jsonDBListPretty: String = gsonPretty.toJson(vehicleModel)
+        Log.d("Repository", "Ping json vehicles data to give you ${jsonDBListPretty}")
+        val requestBody = jsonDBListPretty.toRequestBody("application/json".toMediaTypeOrNull())
+
+        try {
+            val response = vehicleService.sendVehicleDataToServer(requestBody)
+            if (response.isSuccessful) {
+                val gson2 = GsonBuilder().setPrettyPrinting()
+                    .create()
+                val prettyJson = gson2.toJson(
+                    JsonParser.parseString(response.body()?.string())
+                )
+                Log.d("Repository", "Retrieve response from Vehicles field Server ${prettyJson}")
+            }
+        }catch (e: Exception) {
+            Log.d("Repository", "Network after clicked engagementData error is ${e.message}")
+        }
+    }
+
+     suspend fun insertVehicleFieldData(vehiclesData: VehiclesData) {
         val jsonDBListPretty: String = gsonPretty.toJson(vehiclesData)
         Log.d("Repository", "Ping json vehicles data to give you ${jsonDBListPretty}")
         val requestBody = jsonDBListPretty.toRequestBody("application/json".toMediaTypeOrNull())
@@ -111,6 +147,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
     }
 
     val retrieveVehicledataLive = dbGgriev.retrieveLiveVehicle()
+
 
     val displayVehicles = dbGgriev.retrieveLiveVehicleRequested()
 
@@ -176,6 +213,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                     editor.putString("username", "${user.full_name}")
                     editor.putString("status", "${user.status}")
                     editor.putString("position", "${user.position}")
+                    editor.apply()
                     editor.commit()
                     val papListModel = PapEntity(
                         BuildConfig.API_KEY,
@@ -250,6 +288,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         }
     }
 
+    //Done
     suspend fun insertGrievanceToserver(agriev : AgrienceModel) {
         val jsonDBAgriev : String = gsonPretty.toJson(agriev)
         Log.d("Repository", "Ping json all grievence to give you ${jsonDBAgriev}")
@@ -270,7 +309,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
             Log.d("Repository", "Network after clicked grievanceForm error is ${e.message}")
         }
     }
-
+    //Done
     suspend fun insertEngagementToServer(engagement : EngageModel) {
         val jsonDBListPretty: String = gsonPretty.toJson(engagement)
         Log.d("Repository", "Ping json engagment to give you ${jsonDBListPretty}")
@@ -291,14 +330,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         }
     }
 
-    suspend fun insertHseToServer(hseData : Hsedata) {
-        val jsonDBListPretty: String = gsonPretty.toJson(hseData)
-        Log.d("Repository", "Pink the login credential by get field ID${jsonDBListPretty}")
-        val fieldId = sharedPreference.getString("field_id","2016")
-        val username = sharedPreference.getString("username", "default")
-        val hseModel = HseModel("${BuildConfig.API_KEY_GRIEVANCE}", "${fieldId}",
-             "${username}",
-                        listOf(hseData))
+    suspend fun insertHseModelToServer(hseModel: HseModel) {
         val overhsegeneral = gsonPretty.toJson(hseModel)
         Log.d("Repository", "Sending to the hse server receives: ${overhsegeneral}")
         val hseModelToJson : String = gsonPretty.toJson(hseModel)
@@ -318,8 +350,24 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         } catch (e: Exception) {
             Log.d("Repository", "Network after clicked retrievedData error is ${e.message}")
         }
+
     }
 
+    suspend fun insertToHseDataFirst(hsedata: Hsedata) : Long{
+        return dbGgriev.insertIntoHSE(hsedata)
+    }
+
+    suspend fun retrieveSingleHse() : Hsedata {
+        return dbGgriev.retrieveSingleHSE()
+    }
+
+  suspend fun insertToSingleVehicleDataOG(data: VehiclesData) : Long {
+      return dbGgriev.insertIntoSingleVehicleDataOG(data)
+  }
+
+    suspend fun retriveFromSingleVehicleDataOG() : VehiclesData {
+        return dbGgriev.retrieveFromSingleVehicleDataOG()
+    }
 
     suspend fun insertToCgrienvance(grievanceModel: CgrievanceModel) : Long {
        return dbGgriev.insertSingleCGrievEntries(grievanceModel)
@@ -335,13 +383,14 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
 
     suspend fun retrieveAttachment() : DattachmentModel { return dbGgriev.retrieveSingleAttach()}
 
-    suspend fun clearGrievance() { dbGgriev.deleteGTable()}
+    suspend fun retrieveHseSingleList() : List<Hsedata> {
+        return dbGgriev.retrieveListHSe()}
 
     suspend fun clearAttachment() { dbGgriev.deleteDTable()}
 
     suspend fun retrieveAGrieveGeralList() : List<AgrienceModel>{ return dbGgriev.retrieveAgrieveList()}
 
-    val retrieveModel : LiveData<List<AgrienceModel>> =  dbGgriev.retrieveGrievanceListLive()
+    val retrieveHseDataLive : LiveData<List<Hsedata>> =  dbGgriev.retrieveLiveHSE()
 
     suspend fun insertToAGriev(data : AgrienceModel) : Long {
         return dbGgriev.insertSingleGriev(data)

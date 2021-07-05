@@ -6,7 +6,9 @@ import raum.muchbeer.total.model.grievance.AgrienceModel
 import raum.muchbeer.total.model.grievance.BpapDetailModel
 import raum.muchbeer.total.model.grievance.CgrievanceModel
 import raum.muchbeer.total.model.grievance.DattachmentModel
+import raum.muchbeer.total.model.hse.HseModel
 import raum.muchbeer.total.model.hse.Hsedata
+import raum.muchbeer.total.model.vehicle.VehicleModel
 import raum.muchbeer.total.model.vehicle.VehiclesData
 import raum.muchbeer.total.model.vehicle.request.Vehicle
 
@@ -49,14 +51,20 @@ interface DBGrievanceSource {
 
     suspend fun deleteDTable()
 
-    //********************8888HSE
+    //********************HSE DATA **************
     suspend fun insertIntoHSE(data : Hsedata) : Long
 
     fun retrieveLiveHSE() : LiveData<List<Hsedata>>
 
     suspend fun retrieveListHSe() : List<Hsedata>
 
-    //********************8888HSE
+    suspend fun insertIntoSingeHSEModel(data : HseModel) : Long
+
+    suspend fun retrieveListofHseModel() : List<HseModel>
+
+    suspend fun retrieveSingleHSE() : Hsedata
+
+    //********************Engagement****************
     suspend fun insertIntoEngagement(data : EngageModel) : Long
 
     fun retrieveLiveEngagement() : LiveData<List<EngageModel>>
@@ -70,6 +78,17 @@ interface DBGrievanceSource {
 
     suspend fun retrieveListVehicle() : List<VehiclesData>
 
+    suspend fun insertIntoVehicleModel(data : VehicleModel) : Long
+
+    suspend fun insertIntoSingleVehicleDataOG(data: VehiclesData) : Long
+
+    suspend fun retrieveFromSingleVehicleDataOG() : VehiclesData
+
+    suspend fun retrieveListVehicleModel() : List<VehicleModel>
+
+    suspend fun retrieveSingleVehicle() : Vehicle
+
+    suspend fun insertSingleVehicleData(data: Vehicle) : Long
     //********************REQUESTED VEHICLE
   //  suspend fun insertIntoVehicle(data : VehiclesData) : Long
 

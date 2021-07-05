@@ -52,7 +52,6 @@
                     android:layout_marginTop="20dp"
                     android:entries="@{viewModel.liveToolboxs}"
                     app:toolbox="@{viewModel.userSelectToolbox}" />
-
             </LinearLayout>
 
             <View
@@ -139,7 +138,7 @@
                     android:textSize="20dp"
                     android:padding="8dp"
                     android:layout_marginTop="18dp"
-                    android:text="Any Incidate: " />
+                    android:text="Any Incident: " />
 
                 <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/appCompatSpinner"
@@ -233,7 +232,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
-                android:onClick="@{()->viewModel.insertToHSE()}"
+                android:onClick="@{()->viewModel.insertToHSEModelDB()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

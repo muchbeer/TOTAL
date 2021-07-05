@@ -13,7 +13,9 @@ import raum.muchbeer.total.model.grievance.AgrienceModel
 import raum.muchbeer.total.model.grievance.BpapDetailModel
 import raum.muchbeer.total.model.grievance.CgrievanceModel
 import raum.muchbeer.total.model.grievance.DattachmentModel
+import raum.muchbeer.total.model.hse.HseModel
 import raum.muchbeer.total.model.hse.Hsedata
+import raum.muchbeer.total.model.vehicle.VehicleModel
 import raum.muchbeer.total.model.vehicle.VehiclesData
 import raum.muchbeer.total.model.vehicle.request.Vehicle
 import raum.muchbeer.total.repository.datasource.DBGrievanceSource
@@ -76,6 +78,8 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
     override suspend fun deleteDTable() {
         return dAttachDao.clear()    }
 
+
+    //HSE DAO
     override suspend fun insertIntoHSE(data: Hsedata) : Long {
       return  hseDao.insertSingleHse(data)
     }
@@ -85,6 +89,20 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
 
     override suspend fun retrieveListHSe(): List<Hsedata> {
      return hseDao.retrieveList()    }
+
+    override suspend fun insertIntoSingeHSEModel(data: HseModel): Long {
+       return hseDao.insertSingleHseModel(data)
+    }
+
+
+
+    override suspend fun retrieveListofHseModel(): List<HseModel> {
+       return hseDao.retrieveHseModel()
+    }
+
+    override suspend fun retrieveSingleHSE(): Hsedata {
+        return hseDao.retrieveSingleHSE()
+    }
 
     override suspend fun insertIntoEngagement(data: EngageModel): Long {
         return engageDao.insertSingleEngage(data)
@@ -105,6 +123,30 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
 
     override suspend fun retrieveListVehicle(): List<VehiclesData> {
      return vehiclesDao.retrieveList()   }
+
+    override suspend fun insertIntoVehicleModel(data: VehicleModel): Long {
+        return vehiclesDao.insertSingleVehicleModel(data)
+    }
+
+    override suspend fun insertIntoSingleVehicleDataOG(data: VehiclesData): Long {
+        return vehiclesDao.insertSingleVehicle(data)
+    }
+
+    override suspend fun retrieveFromSingleVehicleDataOG(): VehiclesData {
+       return vehiclesDao.retrieveSingleVehicleData()
+    }
+
+    override suspend fun retrieveListVehicleModel(): List<VehicleModel> {
+     return vehiclesDao.retrieveListSingleModel()    }
+
+    override suspend fun retrieveSingleVehicle(): Vehicle {
+        return vehiclesDao.retrieveSingleVehicle()
+    }
+
+    override suspend fun insertSingleVehicleData(data: Vehicle): Long {
+        return vehiclesDao.insertSingleVehicleData(data)
+    }
+
 
     override fun retrieveLiveVehicleRequested(): LiveData<List<Vehicle>> {
         return vehiclesDao.retrieveVehicleRequested()

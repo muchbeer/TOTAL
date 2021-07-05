@@ -35,9 +35,6 @@ class HseActivity : AppCompatActivity() {
         setupActionBarWithNavController(this, navController)
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return findNavController(this, R.id.fragment_host).navigateUp()
-    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater

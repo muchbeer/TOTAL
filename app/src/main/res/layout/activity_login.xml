@@ -125,6 +125,6 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/user_profile_image_background"
             android:elevation="4dp"
-            android:src="@drawable/ic_baseline_person_24" />
+            android:src="@drawable/logo32" />
     </RelativeLayout>
 </layout>

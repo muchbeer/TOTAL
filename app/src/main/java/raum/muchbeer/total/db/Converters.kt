@@ -4,7 +4,6 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import raum.muchbeer.total.db.vehicledao.VehicleDao
 import raum.muchbeer.total.model.grievance.BpapDetailModel
 import raum.muchbeer.total.model.grievance.CgrievanceModel
 import raum.muchbeer.total.model.grievance.DattachmentModel
@@ -87,6 +86,8 @@ class Converters {
 
      return listHse
     }
+
+
     // ***********DAttachement*****************
     @TypeConverter
     fun papDAttachmentToJson(listOfAttachment: List<DattachmentModel>): String {
@@ -114,7 +115,7 @@ class Converters {
 
     //******************************vehicles*******************88
     @TypeConverter
-    fun vehiclesDataToJson(listOfVehicle: List<VehicleDao>): String {
+    fun vehiclesDataToJson(listOfVehicle: List<VehiclesData>): String {
         val gson = Gson()
 
         if (listOfVehicle.isNullOrEmpty()) return ""

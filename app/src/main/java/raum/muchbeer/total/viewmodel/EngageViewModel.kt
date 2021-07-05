@@ -13,6 +13,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import raum.muchbeer.total.BuildConfig
 import raum.muchbeer.total.model.engagement.EngageModel
+import raum.muchbeer.total.model.vehicle.request.Vehicle
 import raum.muchbeer.total.repository.Repository
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,6 +25,12 @@ class EngageViewModel @Inject constructor( val repository: Repository,
 
     val sharedPreference =  context.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
 
+
+    private val _navigateToFormFilling = MutableLiveData<EngageModel>()
+    val navigateToFormFilling: LiveData<EngageModel>
+        get() = _navigateToFormFilling
+
+
     private var _checkEngageData = MutableLiveData<String>()
     val checkEngageData : LiveData<String>
         get() = _checkEngageData
@@ -33,6 +40,8 @@ class EngageViewModel @Inject constructor( val repository: Repository,
     init {
         liveAreaLevel = mutableListOf("   ","Regional", "District", "Ward", "Village")
     }
+
+    val engageLiveData = repository.retrieveEngageLive
 
     private var _selectAreaLocation = MutableLiveData<String>()
     val userSelectArea = ObservableField<String>().apply {
@@ -80,21 +89,28 @@ class EngageViewModel @Inject constructor( val repository: Repository,
     }
 
     fun insertToEngagement()  =  viewModelScope.launch{
+        val sdf = SimpleDateFormat("yyyy-M-dd hh:mm:ss")
+        val currentDate = sdf.format(Date())
+
         val randomNumber = (100..200000).random()
         val field_id = sharedPreference.getString("field_id", "default")
-        val user_name = sharedPreference.getString("user_name", "default")
+        val user_name = sharedPreference.getString("username", "default")
         val engageModel = EngageModel("${BuildConfig.API_KEY_GRIEVANCE}",
                 "${field_id}", "${_inputKeypoint.value}",
                 "${_inputListParticipant.value}", "${_inputMeetingTime.value}",
                 "${_inputNoParticipant.value}", "${user_name}",
-               "${_selectAreaLocation.value}",  "${randomNumber}"
+               "${_selectAreaLocation.value}",  "${currentDate}"
         )
 
         val engageCheck = repository.insertToEngagement(engageModel)
         if (engageCheck >-1) {
             Log.d("EngageViewModel", "Database Engagement is successful entered")
-            repository.insertEngagementToServer(engageModel)
+          //  repository.insertEngagementToServer(engageModel)
             _checkEngageData.value = "Success"
         }
     }
+
+    fun displayComplete() {    _navigateToFormFilling.value = null    }
+
+    fun displayFormFilling(engageList: EngageModel) {  _navigateToFormFilling.value = engageList   }
 }

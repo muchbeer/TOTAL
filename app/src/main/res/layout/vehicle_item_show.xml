@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="vehicle"
-            type="raum.muchbeer.total.model.vehicle.request.Vehicle" />
+            name="vehicleForm"
+            type="raum.muchbeer.total.model.vehicle.VehiclesData" />
 
     </data>
 
@@ -46,7 +46,7 @@
                 android:layout_alignParentTop="true"
                 android:textSize="25dp"
                 tools:text="George Msope"
-                android:text="@{vehicle.drivers_name}"/>
+                android:text="@{vehicleForm.vehicle_number}"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -57,7 +57,7 @@
                 android:layout_toEndOf="@+id/item_image"
                 android:layout_toRightOf="@+id/item_image"
                 android:layout_below="@+id/item_title"
-                android:text="@{vehicle.vehicle_number}"/>
+                android:text="@{vehicleForm.reg_date}"/>
 
             <TextView
                 android:layout_width="wrap_content"

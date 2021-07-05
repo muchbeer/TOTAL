@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import raum.muchbeer.total.R
 import raum.muchbeer.total.databinding.FragmentEngagementBinding
@@ -27,8 +28,17 @@ class EngagementFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
+        callFunctionAndRetrieveData()
 
         return binding.root
+    }
+
+    private fun callFunctionAndRetrieveData() {
+        viewModel.checkEngageData.observe(viewLifecycleOwner, {
+            if (it=="Success") {
+                findNavController().navigate(EngagementFragmentDirections.actionEngagementFragmentToEngagementDetailFragment())
+            }
+        })
     }
 
 }

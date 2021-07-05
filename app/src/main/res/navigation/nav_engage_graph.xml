@@ -9,5 +9,14 @@
         android:id="@+id/engagementFragment"
         android:name="raum.muchbeer.total.fragment.engagement.EngagementFragment"
         android:label="fragment_engagement"
-        tools:layout="@layout/fragment_engagement" />
+        tools:layout="@layout/fragment_engagement" >
+        <action
+            android:id="@+id/action_engagementFragment_to_engagementDetailFragment"
+            app:destination="@id/engagementDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/engagementDetailFragment"
+        android:name="raum.muchbeer.total.fragment.engagement.EngagementDetailFragment"
+        android:label="Engage"
+        tools:layout="@layout/fragment_engagement_detail"/>
 </navigation>

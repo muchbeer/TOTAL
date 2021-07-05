@@ -18,5 +18,5 @@ data class DattachmentModel(
     val file_url: String,
     @SerializedName("primary_key")
     @PrimaryKey(autoGenerate = false)
-    val primary_key: Int
+    val primary_key: String
 ) : Parcelable

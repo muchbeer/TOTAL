@@ -24,6 +24,7 @@ import raum.muchbeer.total.repository.Repository
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.Base64.getEncoder
 import javax.inject.Inject
 
 @HiltViewModel
@@ -204,8 +205,6 @@ class SampleVM @Inject constructor(val repository: Repository,
                 "  ${_checkHouseSample.value}" + "  ${_checkLandSample.value}" + "  ${_checkCropSample.value}"
         Log.d("SampleVM", "Value obtained is Type is Sign: ${_combineGrievanceType.value}")
 
-
-        val randomNumber = (100..200000).random()
         val sdf = SimpleDateFormat("yyyy-M-dd hh:mm:ss")
         val currentDate = sdf.format(Date())
 
@@ -237,7 +236,9 @@ class SampleVM @Inject constructor(val repository: Repository,
     }
 
     fun attachMentDB() = viewModelScope.launch {
-        val dAttach = DattachmentModel("${_inputPhotoComment.value}", "image","${_inputPhotoUrl.value}", 0)
+        val randomNumber = (100..200000).random()
+
+        val dAttach = DattachmentModel("${_inputPhotoComment.value}", "image","${_inputPhotoUrl.value}", "${randomNumber}")
         val checkAttachment =  repository.insertToDAttachment(dAttach)
         if (checkAttachment > -1) Log.d("SampleVM", "Attachment Database inserted") else
         Log.d("SampleVM", "Error Inserted into Attachment")
@@ -245,7 +246,7 @@ class SampleVM @Inject constructor(val repository: Repository,
     }
     fun convertToBase64(bitmap: Bitmap)  = viewModelScope.launch{
         val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos)
         val b = baos.toByteArray()
         val base64String = Base64.encodeToString(b, Base64.NO_WRAP)
         Log.d("PhotoFragment", "The base 64 is now become: ${base64String}")

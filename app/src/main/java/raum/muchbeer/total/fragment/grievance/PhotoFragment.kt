@@ -78,10 +78,11 @@ return binding.root
             // There are no request codes
             val data: Intent? = result.data
         //    val takenImage = data?.extras?.get("data") as Bitmap
-            val takenImage = BitmapFactory.decodeFile(photoFile.absolutePath)
-            Log.d("PhotoFragment", "The value collected is: ${takenImage}")
-            viewModel.convertToBase64(takenImage)
-            binding.imageView.setImageBitmap(takenImage)
+            val takenImageInBitMap = BitmapFactory.decodeFile(photoFile.absolutePath)
+            Log.d("PhotoFragment", "The value collected is: ${takenImageInBitMap}")
+            Log.d("PhotoFragment", "The file value is : ${photoFile.absolutePath}")
+            viewModel.convertToBase64(takenImageInBitMap)
+            binding.imageView.setImageBitmap(takenImageInBitMap)
         }
     }
 

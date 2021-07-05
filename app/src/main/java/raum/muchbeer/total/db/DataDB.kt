@@ -15,7 +15,9 @@ import raum.muchbeer.total.model.grievance.BpapDetailModel
 import raum.muchbeer.total.model.grievance.CgrievanceModel
 import raum.muchbeer.total.model.grievance.DattachmentModel
 import raum.muchbeer.total.model.grievance.papform.PapEntryListModel
+import raum.muchbeer.total.model.hse.HseModel
 import raum.muchbeer.total.model.hse.Hsedata
+import raum.muchbeer.total.model.vehicle.VehicleModel
 import raum.muchbeer.total.model.vehicle.VehiclesData
 import raum.muchbeer.total.model.vehicle.request.Vehicle
 
@@ -24,8 +26,8 @@ import raum.muchbeer.total.model.vehicle.request.Vehicle
 @Database(entities = [PapEntryListModel::class,
     AgrienceModel::class, BpapDetailModel::class, CgrievanceModel::class,
     DattachmentModel::class, Hsedata::class, EngageModel::class, VehiclesData::class,
-                     Vehicle::class]
-    ,     version = 27, exportSchema = false)
+    HseModel::class, Vehicle::class, VehicleModel::class]
+    ,     version = 36, exportSchema = false)
 abstract class DataDB : RoomDatabase() {
     abstract fun PapListDao() : PapListDao
     abstract fun AgrievanceDao() : AgrievanceGeneralDao
@@ -35,7 +37,6 @@ abstract class DataDB : RoomDatabase() {
     abstract fun HseDao() : HseDao
     abstract fun EngageDao() : EngagementDao
     abstract fun VehicleDao() : VehicleDao
-
     companion object {
         @Volatile
         private var INSTANCE : DataDB? = null

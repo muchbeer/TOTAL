@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import raum.muchbeer.total.model.grievance.CgrievanceModel
+import raum.muchbeer.total.model.hse.HseModel
 import raum.muchbeer.total.model.hse.Hsedata
 
 @Dao
@@ -20,5 +21,15 @@ interface HseDao {
     fun retrieveHse() : LiveData<List<Hsedata>>
 
     @Query("SELECT * FROM hse")
-    fun retrieveList() : List<Hsedata>
+    suspend fun retrieveList() : List<Hsedata>
+
+    @Query("SELECT * FROM hse")
+    suspend fun retrieveSingleHSE() : Hsedata
+
+
+    @Query("SELECT * FROM hse_general_table")
+    suspend fun retrieveHseModel() : List<HseModel>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSingleHseModel(data: HseModel) : Long
 }

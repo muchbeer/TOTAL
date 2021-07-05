@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import raum.muchbeer.total.R
 import raum.muchbeer.total.databinding.ActivityHseBinding
@@ -34,6 +35,7 @@ class HseFragment : Fragment() {
         viewModel.checkHseData.observe(requireActivity(), {
             if(it =="Success") {
                 Toast.makeText(requireContext(), "Database inserted", Toast.LENGTH_LONG).show()
+                findNavController().navigate(HseFragmentDirections.actionHseFragmentToHseListFragment())
             }
         })
 

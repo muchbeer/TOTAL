@@ -89,7 +89,7 @@ class FinalViewModel @Inject constructor(val repository: Repository,
         retrieveData.forEach {
          if (!it.field_id.isNullOrEmpty()) {
              _checkOnDoneStatus.value = "Success"
-             repository.insertGrievanceToserver(it)
+           //  repository.insertGrievanceToserver(it)
 
          }
             val listG = it.papdetails

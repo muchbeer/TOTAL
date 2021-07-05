@@ -23,6 +23,6 @@ data class EngageModel(
      @SerializedName("locationtype")
      val locationtype : String,
     @PrimaryKey(autoGenerate = false)
-    @SerializedName("primary_key")
-    val primary_key : String
+    @SerializedName("reg_date")
+    val reg_date : String
 )

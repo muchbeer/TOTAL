@@ -20,6 +20,6 @@ interface EngagementDao {
     fun retrieveEngage() : LiveData<List<EngageModel>>
 
     @Query("SELECT * FROM engagement_tbl")
-    fun retrievEngageList() : List<EngageModel>
+    suspend fun retrievEngageList() : List<EngageModel>
 
 }

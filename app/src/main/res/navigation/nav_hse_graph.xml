@@ -9,7 +9,11 @@
         android:id="@+id/hseFragment"
         android:name="raum.muchbeer.total.fragment.hse.HseFragment"
         android:label="HSE"
-        tools:layout="@layout/fragment_hse"/>
+        tools:layout="@layout/fragment_hse">
+        <action
+            android:id="@+id/action_hseFragment_to_hseListFragment"
+            app:destination="@id/hseListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/vehicleFragment"
         android:name="raum.muchbeer.total.fragment.hse.VehicleFragment"
@@ -27,5 +31,25 @@
         <argument
             android:name="vehicleDetails"
             app:argType="raum.muchbeer.total.model.vehicle.request.Vehicle" />
+        <action
+            android:id="@+id/action_vehicleFormFragment_to_vehicleListFragment"
+            app:destination="@id/vehicleListFragment" />
+        <action
+            android:id="@+id/action_vehicleFormFragment_to_lastFragment"
+            app:destination="@id/lastFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/hseListFragment"
+        android:name="raum.muchbeer.total.fragment.hse.HseListFragment"
+        android:label="Hse Records"
+        tools:layout="@layout/fragment_hse_list"/>
+    <fragment
+        android:id="@+id/vehicleListFragment"
+        android:name="raum.muchbeer.total.fragment.hse.VehicleListFragment"
+        android:label="fragment_vehicle_list"
+        tools:layout="@layout/fragment_vehicle_list" />
+    <fragment
+        android:id="@+id/lastFragment"
+        android:name="raum.muchbeer.total.fragment.hse.LastFragment"
+        android:label="LastFragment" />
 </navigation>
