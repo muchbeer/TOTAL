@@ -2,6 +2,7 @@ package raum.muchbeer.total.db.grievancedao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import raum.muchbeer.total.model.ImageFirestore
 import raum.muchbeer.total.model.grievance.DattachmentModel
 
 @Dao
@@ -18,11 +19,20 @@ interface DattachDao {
     @Update
     fun update(attachment: DattachmentModel)
 
-    @Query("SELECT * FROM d_attachment_tbl")
-    suspend fun retrieveListOfAttachment() : List<DattachmentModel>
+    @Query("SELECT * FROM takeToFirestore")
+    suspend fun retrieveListOfImages() : List<ImageFirestore>
+
+    @Update
+    fun updateImages(data: ImageFirestore)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertImages(data : ImageFirestore) : Long
+
+    @Query("SELECT * FROM d_attachment_tbl WHERE primary_key LIKE :unique_data")
+    suspend fun retrieveSingleAttachment(unique_data : String) : DattachmentModel
 
     @Query("SELECT * FROM d_attachment_tbl")
-    suspend fun retrieveSingleAttachment() : DattachmentModel
+    suspend fun retrieveListOfAttachment() : List<DattachmentModel>
 
     @Query("DELETE FROM d_attachment_tbl")
     suspend fun clear()

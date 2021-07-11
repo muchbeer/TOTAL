@@ -9,6 +9,7 @@ import raum.muchbeer.total.db.engagedao.EngagementDao
 import raum.muchbeer.total.db.grievancedao.*
 import raum.muchbeer.total.db.hsedao.HseDao
 import raum.muchbeer.total.db.vehicledao.VehicleDao
+import raum.muchbeer.total.model.ImageFirestore
 import raum.muchbeer.total.model.engagement.EngageModel
 import raum.muchbeer.total.model.grievance.AgrienceModel
 import raum.muchbeer.total.model.grievance.BpapDetailModel
@@ -26,8 +27,8 @@ import raum.muchbeer.total.model.vehicle.request.Vehicle
 @Database(entities = [PapEntryListModel::class,
     AgrienceModel::class, BpapDetailModel::class, CgrievanceModel::class,
     DattachmentModel::class, Hsedata::class, EngageModel::class, VehiclesData::class,
-    HseModel::class, Vehicle::class, VehicleModel::class]
-    ,     version = 36, exportSchema = false)
+    HseModel::class, Vehicle::class, VehicleModel::class, ImageFirestore::class]
+    ,     version = 38, exportSchema = false)
 abstract class DataDB : RoomDatabase() {
     abstract fun PapListDao() : PapListDao
     abstract fun AgrievanceDao() : AgrievanceGeneralDao

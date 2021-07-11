@@ -1,8 +1,10 @@
 package raum.muchbeer.total.viewmodel
 
+import android.R.attr.path
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Base64
+import android.util.Base64OutputStream
 import android.util.Log
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
@@ -15,17 +17,19 @@ import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
-import raum.muchbeer.total.BuildConfig
-import raum.muchbeer.total.model.grievance.AgrienceModel
-import raum.muchbeer.total.model.grievance.BpapDetailModel
+import raum.muchbeer.total.model.ImageFirestore
 import raum.muchbeer.total.model.grievance.CgrievanceModel
 import raum.muchbeer.total.model.grievance.DattachmentModel
 import raum.muchbeer.total.repository.Repository
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Base64.getEncoder
 import javax.inject.Inject
+
 
 @HiltViewModel
 class SampleVM @Inject constructor(val repository: Repository,
@@ -76,19 +80,20 @@ class SampleVM @Inject constructor(val repository: Repository,
     setPrettyPrinting().create()
 
     val sharedPreference =  context.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
+    val editor = sharedPreference.edit()
 
     init {
 
-        liveAgreeSigns = mutableListOf("   ","Yes", "No")
-        liveSatisfyContract = mutableListOf("   ","Yes", "No")
+        liveAgreeSigns = mutableListOf("   ", "Yes", "No")
+        liveSatisfyContract = mutableListOf("   ", "Yes", "No")
         liveEntriesStatus = mutableListOf("    ", "Open", "In Progress", "Closes")
-        liveRecommendation = mutableListOf("   ", "Yes", "No" )
+        liveRecommendation = mutableListOf("   ", "Yes", "No")
         liveInquireType = mutableListOf("   ", "Grievance", "Issue", "Query", "Concern")
     }
 
         private var _inputInquiryType = MutableLiveData<String>()
     val userSelectInquiryType = ObservableField<String>().apply {
-        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback(){
+        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                 _inputInquiryType.value = get()
             }
@@ -96,7 +101,7 @@ class SampleVM @Inject constructor(val repository: Repository,
     }
 
     val userSelectionAgreeToSign = ObservableField<String>().apply {
-        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback(){
+        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                 _inputAgreeToSign.value = get()
             }
@@ -104,7 +109,7 @@ class SampleVM @Inject constructor(val repository: Repository,
     }
 
     val userSelectEntryStatus = ObservableField<String>().apply {
-        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback(){
+        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                 Log.d("SelectVM", "Select entry status is : ${get()}")
                 _inputEntryStatus.value = get()
@@ -121,7 +126,7 @@ class SampleVM @Inject constructor(val repository: Repository,
     }
 
     val userSelectRecommendation = ObservableField<String>().apply {
-        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback(){
+        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                 _inputRecommendation.value = get()
             }
@@ -129,7 +134,7 @@ class SampleVM @Inject constructor(val repository: Repository,
     }
 
     val userSelectionSatisfyContract = ObservableField<String>().apply {
-        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback(){
+        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                 _inputSatisfyContract.value = get()
             }
@@ -163,22 +168,22 @@ class SampleVM @Inject constructor(val repository: Repository,
 
     //Photo Observation
     val observePhotoCommentEdtTxt = ObservableField<String>().apply {
-        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback(){
+        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                 _inputPhotoComment.value = get()
             }
         })
     }
 
-    fun checkLand(isLand : Boolean) {
+    fun checkLand(isLand: Boolean) {
         if (isLand) _checkLandSample.value = "Land"
         else _checkLandSample.value="None"     }
 
-    fun checkCrops(isCrops : Boolean) {
+    fun checkCrops(isCrops: Boolean) {
         if (isCrops) _checkCropSample.value = " Crops"
         else _checkCropSample.value="None"     }
 
-    fun checkAnimal(isAnimal : Boolean) {
+    fun checkAnimal(isAnimal: Boolean) {
         if (isAnimal) _checkAnimalSample.value = "Animal"
         else _checkAnimalSample.value="None"     }
 
@@ -186,10 +191,9 @@ class SampleVM @Inject constructor(val repository: Repository,
         if (isHouses) _checkHouseSample.value = "House"
         else _checkHouseSample.value="None"     }
 
-    fun checkGraves(isGrave : Boolean) {
+    fun checkGraves(isGrave: Boolean) {
         if (isGrave) _checkGraveSample.value = "Graves"
         else _checkGraveSample.value="None"     }
-
 
     fun grievenceDB() = viewModelScope.launch{
             Log.d("SampleVM", "Value obtained is : ${_inputAgreeToSign.value}")
@@ -211,19 +215,22 @@ class SampleVM @Inject constructor(val repository: Repository,
         val full_name = sharedPreference.getString("full_name", "default")
 
         val cgrienvance = CgrievanceModel(
-            "${_inputAgreeToSign.value}",
-            "${_noAgreementToSign.value}",
-            "${_inputSatisfyContract.value}",
-            "${_noSatisfyContract.value}",
-            "${_inputRecommendation.value}",
-            "_${_noRecommendation.value}",
-            "${_inputEntryStatus.value}",
-            "${currentDate}",
-            "${_combineGrievanceType.value}",
-            "${_inputCompasationComment.value}",
-            "${full_name}",
-            "${_inputInquiryType.value}"
+                "${_inputAgreeToSign.value}",
+                "${_noAgreementToSign.value}",
+                "${_inputSatisfyContract.value}",
+                "${_noSatisfyContract.value}",
+                "${_inputRecommendation.value}",
+                "_${_noRecommendation.value}",
+                "${_inputEntryStatus.value}",
+                "${currentDate}",
+                "${_combineGrievanceType.value}",
+                "${_inputCompasationComment.value}",
+                "${full_name}",
+                "${_inputInquiryType.value}"
         )
+        editor.putString("reg_date", "${currentDate}")
+        editor.apply()
+        editor.commit()
 
         Log.d("Grievance", "Griev Object is : ${cgrienvance}")
      val checkGrive=   repository.insertToCgrienvance(cgrienvance)
@@ -238,18 +245,74 @@ class SampleVM @Inject constructor(val repository: Repository,
     fun attachMentDB() = viewModelScope.launch {
         val randomNumber = (100..200000).random()
 
-        val dAttach = DattachmentModel("${_inputPhotoComment.value}", "image","${_inputPhotoUrl.value}", "${randomNumber}")
+        val dAttach = DattachmentModel("${_inputPhotoComment.value}", "image", "${_inputPhotoUrl.value}", "${randomNumber}")
+        editor.putString("unique_data", "${randomNumber}")
+        editor.apply()
+        editor.commit()
         val checkAttachment =  repository.insertToDAttachment(dAttach)
         if (checkAttachment > -1) Log.d("SampleVM", "Attachment Database inserted") else
         Log.d("SampleVM", "Error Inserted into Attachment")
 
     }
-    fun convertToBase64(bitmap: Bitmap)  = viewModelScope.launch{
-        val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos)
-        val b = baos.toByteArray()
-        val base64String = Base64.encodeToString(b, Base64.NO_WRAP)
-        Log.d("PhotoFragment", "The base 64 is now become: ${base64String}")
-        _inputPhotoUrl.value = base64String
+
+    fun convertImageFileToBase64(imageFile: File): String {
+        return ByteArrayOutputStream().use { outputStream ->
+            Base64OutputStream(outputStream, Base64.DEFAULT).use { base64FilterStream ->
+                imageFile.inputStream().use { inputStream ->
+                    inputStream.copyTo(base64FilterStream)
+                }
+            }
+            return@use outputStream.toString()
+        }
     }
+
+    fun convertFileImageToBase64(imageFile: File) =viewModelScope.launch {
+        val sdf = SimpleDateFormat("dd-mm-yyyy:hh:mm:ss")
+        val currentDate = sdf.format(Date())
+        ByteArrayOutputStream().use { outputStream ->
+            Base64OutputStream(outputStream, Base64.DEFAULT).use { base64FilterStream ->
+                imageFile.inputStream().use { inputStream ->
+                    inputStream.copyTo(base64FilterStream)
+                }
+            }
+            Log.d("PhotoFragment", "The best one is base64 is : ${outputStream}")
+            _inputPhotoUrl.value = imageFile.toString()
+         val checkImage=   repository.insertingImages(ImageFirestore("${imageFile}",
+             "gadiel",  "${currentDate}" ))
+            Log.d("PhotoFragment", "ImageInserted record Number: ${checkImage}")
+        }
+    }
+
+    fun convertFileImagefromJavaConvert(path: File) = viewModelScope.launch{
+        val fout = FileOutputStream(path.toString() + ".txt")
+        val fin = FileInputStream(path)
+
+        System.out.println("File Size:" + path.length())
+
+        val os = ByteArrayOutputStream()
+        val base64out = Base64OutputStream(os, Base64.NO_WRAP)
+
+        val buffer = ByteArray(3 * 512)
+        var len = 0
+        while (fin.read(buffer).also { len = it } >= 0) {
+            base64out.write(buffer, 0, len)
+        }
+
+        println("Encoded Size:" + os.size())
+
+        base64out.flush()
+        base64out.close() //this did the tricks. Please see explanation.
+
+
+        val result = String(os.toByteArray(), Charsets.UTF_8)
+
+        fout.write(os.toByteArray())
+        fout.flush()
+        fout.close()
+        os.close()
+        fin.close()
+
+        Log.d("FragmentPhoto", "Another byte64 from Java is : ${result}")
+    }
+
 }

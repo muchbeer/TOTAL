@@ -27,8 +27,8 @@ interface VehicleDao {
     @Query("SELECT * FROM vehicle_tbl")
      suspend fun retrieveList() : List<VehiclesData>
 
-    @Query("SELECT * FROM vehicle_tbl")
-    suspend fun retrieveSingleVehicleData() : VehiclesData
+    @Query("SELECT * FROM vehicle_tbl WHERE reg_date LIKE :reg_date")
+    suspend fun retrieveSingleVehicleData(reg_date: String) : VehiclesData
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRequestedVehicles(userData : List<Vehicle>)

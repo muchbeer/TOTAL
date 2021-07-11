@@ -180,13 +180,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun sendToServer() {
-
-
-
         val work = PeriodicWorkRequestBuilder<ServerWorker>(15, TimeUnit.MINUTES)
             .setConstraints(setConstraint())
             .build()
-
 
                 WorkManager.getInstance(this).enqueue(work)
 

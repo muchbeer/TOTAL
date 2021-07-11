@@ -143,7 +143,7 @@ class HseViewModel @Inject constructor(val repository: Repository,
 
         repository.insertToHseDataFirst(hseData)
 
-        val returnhseData = repository.retrieveSingleHse()
+        val returnhseData = repository.retrieveSingleHse("${currentDate}")
         val jsonCGrev = gsonPretty.toJson(returnhseData)
 
         val jsonDBListPretty: String = gsonPretty.toJson(hseData)

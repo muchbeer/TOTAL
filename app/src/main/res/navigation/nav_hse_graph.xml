@@ -12,7 +12,11 @@
         tools:layout="@layout/fragment_hse">
         <action
             android:id="@+id/action_hseFragment_to_hseListFragment"
-            app:destination="@id/hseListFragment" />
+            app:destination="@id/hseListFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
     </fragment>
     <fragment
         android:id="@+id/vehicleFragment"
@@ -33,7 +37,11 @@
             app:argType="raum.muchbeer.total.model.vehicle.request.Vehicle" />
         <action
             android:id="@+id/action_vehicleFormFragment_to_vehicleListFragment"
-            app:destination="@id/vehicleListFragment" />
+            app:destination="@id/vehicleListFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
         <action
             android:id="@+id/action_vehicleFormFragment_to_lastFragment"
             app:destination="@id/lastFragment" />

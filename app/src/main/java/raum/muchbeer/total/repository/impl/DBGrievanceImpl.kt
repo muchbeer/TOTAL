@@ -8,6 +8,7 @@ import raum.muchbeer.total.db.grievancedao.CgrievanceDao
 import raum.muchbeer.total.db.grievancedao.DattachDao
 import raum.muchbeer.total.db.hsedao.HseDao
 import raum.muchbeer.total.db.vehicledao.VehicleDao
+import raum.muchbeer.total.model.ImageFirestore
 import raum.muchbeer.total.model.engagement.EngageModel
 import raum.muchbeer.total.model.grievance.AgrienceModel
 import raum.muchbeer.total.model.grievance.BpapDetailModel
@@ -56,8 +57,12 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
     override suspend fun insertListCGrievanceEntries(data: List<CgrievanceModel>) {
      cGrievEntrDao.insertGrievanceees(data)    }
 
-    override suspend fun retrieveSingleGriev(): CgrievanceModel {
-    return cGrievEntrDao.retrieveSingleGrieve()    }
+    override suspend fun retrieveSingleGriev(reg_date: String): CgrievanceModel {
+    return cGrievEntrDao.retrieveSingleGrieve(reg_date)    }
+
+    override suspend fun retrieveListOfGrievance(): List<CgrievanceModel> {
+     return   cGrievEntrDao.retrieveListOfGrievance()
+    }
 
     override suspend fun deleteGTable() {
     cGrievEntrDao.clear()
@@ -72,8 +77,12 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
     override suspend fun insertListCAttachment(data: List<DattachmentModel>) {
     return dAttachDao.insertAttachmentList(data)    }
 
-    override suspend fun retrieveSingleAttach(): DattachmentModel {
-     return dAttachDao.retrieveSingleAttachment()   }
+    override suspend fun retrieveSingleAttach(unique_data : String): DattachmentModel {
+     return dAttachDao.retrieveSingleAttachment(unique_data)   }
+
+    override suspend fun retrieveListOfAttachment(): List<DattachmentModel> {
+       return dAttachDao.retrieveListOfAttachment()
+    }
 
     override suspend fun deleteDTable() {
         return dAttachDao.clear()    }
@@ -100,8 +109,8 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
        return hseDao.retrieveHseModel()
     }
 
-    override suspend fun retrieveSingleHSE(): Hsedata {
-        return hseDao.retrieveSingleHSE()
+    override suspend fun retrieveSingleHSE(reg_date: String): Hsedata {
+        return hseDao.retrieveSingleHSE(reg_date)
     }
 
     override suspend fun insertIntoEngagement(data: EngageModel): Long {
@@ -132,8 +141,8 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
         return vehiclesDao.insertSingleVehicle(data)
     }
 
-    override suspend fun retrieveFromSingleVehicleDataOG(): VehiclesData {
-       return vehiclesDao.retrieveSingleVehicleData()
+    override suspend fun retrieveFromSingleVehicleDataOG(reg_date: String): VehiclesData {
+       return vehiclesDao.retrieveSingleVehicleData(reg_date)
     }
 
     override suspend fun retrieveListVehicleModel(): List<VehicleModel> {
@@ -154,4 +163,16 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
 
     override suspend fun insertIntoListVehicleRequested(data: List<Vehicle>) {
      return vehiclesDao.insertRequestedVehicles(data)    }
+
+    override suspend fun insertImages(data: ImageFirestore) : Long {
+      return   dAttachDao.insertImages(data)
+    }
+
+    override suspend fun retrieveListofImages(): List<ImageFirestore> {
+        return dAttachDao.retrieveListOfImages()
+    }
+
+    override suspend fun updateImages(data: ImageFirestore) {
+        dAttachDao.updateImages(data)
+    }
 }

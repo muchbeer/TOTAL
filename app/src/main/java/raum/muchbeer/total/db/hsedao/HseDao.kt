@@ -23,8 +23,8 @@ interface HseDao {
     @Query("SELECT * FROM hse")
     suspend fun retrieveList() : List<Hsedata>
 
-    @Query("SELECT * FROM hse")
-    suspend fun retrieveSingleHSE() : Hsedata
+    @Query("SELECT * FROM hse WHERE reg_date LIKE :reg_date_hse")
+    suspend fun retrieveSingleHSE(reg_date_hse : String) : Hsedata
 
 
     @Query("SELECT * FROM hse_general_table")

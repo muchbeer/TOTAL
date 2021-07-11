@@ -17,7 +17,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
 
-
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
 

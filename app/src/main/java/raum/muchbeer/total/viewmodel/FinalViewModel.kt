@@ -40,8 +40,6 @@ class FinalViewModel @Inject constructor(val repository: Repository,
         get() = _checkOnDoneStatus
 
 
-
-
     private val _navigateToRecordDetailFragment = MutableLiveData<CgrievanceModel>()
     val navigateToRecordDetail: LiveData<CgrievanceModel>
         get() = _navigateToRecordDetailFragment
@@ -52,13 +50,14 @@ class FinalViewModel @Inject constructor(val repository: Repository,
 
     fun displayFormFilling(grievance: CgrievanceModel) {  _navigateToRecordDetailFragment.value = grievance   }
 
-
     fun displayComplete() {    _navigateToRecordDetailFragment.value = null    }
 
     fun viewInformation() = viewModelScope.launch {
-      val attachment =  repository.retrieveAttachment()
-        val cGrievance = repository.retrieveCgrievance()
-        val jsonCGrev = gsonPretty.toJson(cGrievance)
+      val reg_date =  sharedPreference.getString("reg_date", "default")
+        val unique_data = sharedPreference.getString("unique_data", "default")
+      val attachment =  repository.retrieveAttachment(unique_data!!)
+        val cGrievance = repository.retrieveCgrievance(reg_date!!)
+          val jsonCGrev = gsonPretty.toJson(cGrievance)
         val jsonAttach = gsonPretty.toJson(attachment)
         Log.d("FinalViewModel", "Values of cGrievance is : ${jsonCGrev}")
         Log.d("FinalViewModel", "Values of attachment is : ${jsonAttach}")
@@ -70,27 +69,25 @@ class FinalViewModel @Inject constructor(val repository: Repository,
 
         val bpapDetails = BpapDetailModel("${valuation_id}", listOf(cGrievance),
             listOf(attachment))
+
         val agrievnceModel = AgrienceModel("${randomNumber}", "${BuildConfig.API_KEY_GRIEVANCE}",
             "${field_id}", "${username}", listOf(bpapDetails))
 
         val jsonFinal = gsonPretty.toJson(agrievnceModel)
         Log.d("FinalViewModel", "Values of Grievance is  : ${jsonFinal}")
      val mainTable =   repository.insertToAGriev(agrievnceModel)
-        if (mainTable > -1) Log.d("FinalViewModel", "Main Table data inserted ") else {
+        if (mainTable > -1) Log.d("FinalViewModel", "Main Table data inserted number: ${mainTable} ") else {
             Log.d("FinalViewModel", "Main Table data did not inserted")
         }
     }
 
     val viewdataRecorded = repository.cgrievanceLiveData
     fun clearDatabase() = viewModelScope.launch {
-      /*  repository.clearAttachment()
-        repository.clearGrievance()*/
         val retrieveData = repository.retrieveAGrieveGeralList()
         retrieveData.forEach {
          if (!it.field_id.isNullOrEmpty()) {
              _checkOnDoneStatus.value = "Success"
            //  repository.insertGrievanceToserver(it)
-
          }
             val listG = it.papdetails
             listG.forEach {

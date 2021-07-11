@@ -12,10 +12,16 @@
         tools:layout="@layout/fragment_pap_list">
         <action
             android:id="@+id/action_papListFragment_to_selectFragment"
-            app:destination="@id/selectFragment" />
+            app:destination="@id/selectFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
         <argument
             android:name="papListToselect"
             app:argType="raum.muchbeer.total.model.grievance.papform.PapEntryListModel" />
+
+
     </fragment>
     <fragment
         android:id="@+id/selectFragment"
@@ -24,7 +30,11 @@
         tools:layout="@layout/fragment_form" >
         <action
             android:id="@+id/action_selectFragment_to_photoFragment"
-            app:destination="@id/photoFragment" />
+            app:destination="@id/photoFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
 
         <argument
             android:name="papListToselect"
@@ -37,7 +47,11 @@
         tools:layout="@layout/fragment_photo">
         <action
             android:id="@+id/action_photoFragment_to_finalFragment"
-            app:destination="@id/finalFragment" />
+            app:destination="@id/finalFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
     </fragment>
     <fragment
         android:id="@+id/finalFragment"

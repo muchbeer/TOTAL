@@ -18,8 +18,11 @@ interface CgrievanceDao {
     @Query("SELECT * FROM c_grievance_enter_values")
     fun retrieveGrievancee() : LiveData<List<CgrievanceModel>>
 
-    @Query("SELECT * FROM c_grievance_enter_values")
-    suspend fun retrieveSingleGrieve() : CgrievanceModel
+    @Query("SELECT * FROM c_grievance_enter_values WHERE reg_date LIKE :griev_date")
+    suspend fun retrieveSingleGrieve(griev_date : String) : CgrievanceModel
+
+    @Query("SELECT * FROM c_grievance_enter_values ")
+    suspend fun retrieveListOfGrievance() : List<CgrievanceModel>
 
     @Query("DELETE FROM c_grievance_enter_values")
     suspend fun clear()

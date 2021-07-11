@@ -1,6 +1,8 @@
 package raum.muchbeer.total.repository.datasource
 
+import android.media.Image
 import androidx.lifecycle.LiveData
+import raum.muchbeer.total.model.ImageFirestore
 import raum.muchbeer.total.model.engagement.EngageModel
 import raum.muchbeer.total.model.grievance.AgrienceModel
 import raum.muchbeer.total.model.grievance.BpapDetailModel
@@ -36,7 +38,9 @@ interface DBGrievanceSource {
 
     suspend fun insertListCGrievanceEntries(data : List<CgrievanceModel>)
 
-    suspend fun retrieveSingleGriev() : CgrievanceModel
+    suspend fun retrieveSingleGriev(reg_date : String) : CgrievanceModel
+
+    suspend fun retrieveListOfGrievance() : List<CgrievanceModel>
 
     suspend fun deleteGTable()
 
@@ -47,7 +51,9 @@ interface DBGrievanceSource {
 
     suspend fun insertListCAttachment(data : List<DattachmentModel>)
 
-    suspend fun retrieveSingleAttach() : DattachmentModel
+    suspend fun retrieveSingleAttach(unique_data : String) : DattachmentModel
+
+    suspend fun retrieveListOfAttachment() : List<DattachmentModel>
 
     suspend fun deleteDTable()
 
@@ -62,7 +68,7 @@ interface DBGrievanceSource {
 
     suspend fun retrieveListofHseModel() : List<HseModel>
 
-    suspend fun retrieveSingleHSE() : Hsedata
+    suspend fun retrieveSingleHSE(reg_date: String) : Hsedata
 
     //********************Engagement****************
     suspend fun insertIntoEngagement(data : EngageModel) : Long
@@ -82,7 +88,7 @@ interface DBGrievanceSource {
 
     suspend fun insertIntoSingleVehicleDataOG(data: VehiclesData) : Long
 
-    suspend fun retrieveFromSingleVehicleDataOG() : VehiclesData
+    suspend fun retrieveFromSingleVehicleDataOG(reg_date: String) : VehiclesData
 
     suspend fun retrieveListVehicleModel() : List<VehicleModel>
 
@@ -95,5 +101,12 @@ interface DBGrievanceSource {
     fun retrieveLiveVehicleRequested() : LiveData<List<Vehicle>>
 
     suspend fun insertIntoListVehicleRequested(data: List<Vehicle>)
+
+    //Images
+    suspend fun insertImages(data : ImageFirestore) : Long
+
+    suspend fun retrieveListofImages() : List<ImageFirestore>
+
+    suspend fun updateImages(data : ImageFirestore)
 
 }

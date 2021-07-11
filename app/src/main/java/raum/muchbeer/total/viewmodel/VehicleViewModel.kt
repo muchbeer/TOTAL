@@ -30,8 +30,9 @@ import javax.inject.Inject
 class VehicleViewModel @Inject constructor (val repository: Repository,
                                             @ApplicationContext context: Context) : ViewModel(){
 
-    val sharedPreference =  context.getSharedPreferences("PREFERENCE_VEHICLE", Context.MODE_PRIVATE)
-
+   val sharedPreference =  context.getSharedPreferences("PREFERENCE_VEHICLE", Context.MODE_PRIVATE)
+    val userSharedPreference =  context.getSharedPreferences("PREFERENCE_NAME",Context.MODE_PRIVATE)
+     val editor = userSharedPreference.edit()
     private val _navigateToFormFilling = MutableLiveData<Vehicle>()
     val navigateToFormFilling: LiveData<Vehicle>
         get() = _navigateToFormFilling
@@ -85,13 +86,15 @@ class VehicleViewModel @Inject constructor (val repository: Repository,
         val sdf = SimpleDateFormat("yyyy-M-dd hh:mm:ss")
         val currentDate = sdf.format(Date())
         val vehicleNo =   sharedPreference.getString("vehicle_number", "default")
-        val user_name = sharedPreference.getString("username", "default")
-        val fielId = sharedPreference.getString("field_id", "default")
+        val user_name = userSharedPreference.getString("username", "default")
+        val fielId = userSharedPreference.getString("field_id", "default")
+
 
         val vehicleData = VehiclesData("${_inputDistanceCovered.value}",
             "${_inputHoursTravelled.value}",
             "${randomNumber}", "${currentDate}",
             "${vehicleNo}")
+
 
     val checkVD =   repository.insertToSingleVehicleDataOG(vehicleData)
 
@@ -99,7 +102,7 @@ class VehicleViewModel @Inject constructor (val repository: Repository,
            Log.d("ViewModelVehicel","VehicleModel saved: ${checkVD}")
        }
 
-        val retrieveVD = repository.retriveFromSingleVehicleDataOG()
+        val retrieveVD = repository.retriveFromSingleVehicleDataOG("${currentDate}")
         Log.d ("VehicleViewModel", "Retrieve USers are : ${retrieveVD}")
         val vehicleModel = VehicleModel("${BuildConfig.API_KEY_GRIEVANCE}",
                         "${fielId}", "${user_name}","${randomNumber}",
