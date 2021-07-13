@@ -18,4 +18,7 @@ interface PapListDao {
     @Query("SELECT * FROM paplistModel")
     fun retrievePapUsers() : LiveData<List<PapEntryListModel>>
 
+    @Query("SELECT * FROM paplistModel where full_name like  :paps")
+    fun getSearchResults(paps : String) : LiveData<List<PapEntryListModel>>
+
 }

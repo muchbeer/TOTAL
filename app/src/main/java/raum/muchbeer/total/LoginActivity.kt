@@ -59,6 +59,7 @@ class LoginActivity : AppCompatActivity() {
             snackBar.show()
         }
         sendToServer()
+
     }
 
     private fun checkStatus() {
@@ -159,6 +160,7 @@ class LoginActivity : AppCompatActivity() {
         super.onResume()
         val sharedPreference = getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
 
+        viewModel.retrieveFromFirestore()
         //  checkStatus()
         val position = sharedPreference.getString("field_id", "default")
         if (position == "Data Officer") {
@@ -180,7 +182,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun sendToServer() {
-        val work = PeriodicWorkRequestBuilder<ServerWorker>(15, TimeUnit.MINUTES)
+        val work = PeriodicWorkRequestBuilder<ServerWorker>(2, TimeUnit.HOURS)
             .setConstraints(setConstraint())
             .build()
 
@@ -228,4 +230,6 @@ class LoginActivity : AppCompatActivity() {
             .build()
 
     }
+
+
 }

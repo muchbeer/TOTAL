@@ -28,6 +28,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(val repository: Repository,
                     @ApplicationContext context: Context) : ViewModel(){
     val sharedPreference =  context.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
+    val editor = sharedPreference.edit()
 
     private val _loginState : MutableLiveData<DataState<UserModel>> = MutableLiveData()
     val loginState : LiveData<DataState<UserModel>>
@@ -87,12 +88,18 @@ class LoginViewModel @Inject constructor(val repository: Repository,
         repository.executeLogin(authGrievenceModel).collect {
             _loginState.value = it
         }
-
+        editor.putString("user_id","${_inputUserName.value}")
+        editor.apply()
+        editor.commit()
     }
 
 
     //****************DISPLAY PAPS
     val receiveListOfPaps = repository.papListLiveData
+
+    fun searchPaps(fullName: String) : LiveData<List<PapEntryListModel>> {
+        return repository.searchPaps(fullName)
+    }
 
     fun displayFormFilling(papList: PapEntryListModel) {  _navigateToFormFilling.value = papList   }
 
@@ -108,4 +115,8 @@ class LoginViewModel @Inject constructor(val repository: Repository,
 
         //******utility
     fun keyboardComplete() {  _hideKeyboardvalue.value=""   }
+    
+    fun retrieveFromFirestore() = viewModelScope.launch{
+        repository.retrieveFromFireStoreData()
+    }
 }

@@ -21,4 +21,8 @@ interface AgrievanceGeneralDao {
 
     @Query("SELECT * FROM a_grievance_form1")
    suspend fun retrieveListGrievance() : List<AgrienceModel>
+
+ //   @Query("SELECT * FROM user WHERE first_name LIKE :search "
+    @Query("SELECT * FROM a_grievance_form1 WHERE  user_name LIKE :fullName")
+    suspend fun getSearchedGrievByName(fullName : String) : AgrienceModel
 }

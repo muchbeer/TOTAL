@@ -22,8 +22,8 @@ interface DattachDao {
     @Query("SELECT * FROM takeToFirestore")
     suspend fun retrieveListOfImages() : List<ImageFirestore>
 
-    @Update
-    fun updateImages(data: ImageFirestore)
+    @Query("UPDATE takeToFirestore SET imageUrl=:imageUrl WHERE fileName = :fileName")
+    fun updateImages(imageUrl: String, fileName: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertImages(data : ImageFirestore) : Long

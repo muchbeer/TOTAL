@@ -39,6 +39,10 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
     override suspend fun retrieveAgrieveList(): List<AgrienceModel> {
      return grievDao.retrieveListGrievance()    }
 
+    override suspend fun getSearchedGrievByNamme(fullName: String): AgrienceModel {
+        return grievDao.getSearchedGrievByName(fullName)
+    }
+
     override fun retrieveBGrievDetailD(): LiveData<List<BpapDetailModel>> {
     return bGrievIDao.retrieveBpapDetailD()    }
 
@@ -172,7 +176,7 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
         return dAttachDao.retrieveListOfImages()
     }
 
-    override suspend fun updateImages(data: ImageFirestore) {
-        dAttachDao.updateImages(data)
+    override suspend fun updateImages(imageUrl: String, fileName : String) {
+        dAttachDao.updateImages(imageUrl, fileName)
     }
 }

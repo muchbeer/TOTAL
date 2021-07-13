@@ -19,4 +19,8 @@ class DBPapListImpl(val papListDao: PapListDao) : DBPapUserSource {
         return papListDao.insertPapList(data)
     }
 
+    override fun searchPaps(fullName: String): LiveData<List<PapEntryListModel>> {
+      return papListDao.getSearchResults(fullName)
+    }
+
 }

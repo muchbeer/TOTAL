@@ -9,4 +9,7 @@ interface DBPapUserSource {
     suspend fun insertSinglePap(data : PapEntryListModel) : Long
 
     suspend fun insertListPap(data: List<PapEntryListModel>)
+
+    //*********************PAPS**********************
+    fun searchPaps(fullName: String) : LiveData<List<PapEntryListModel>>
 }

@@ -1,5 +1,6 @@
 package raum.muchbeer.total.fragment.grievance
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,8 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import raum.muchbeer.total.HomeActivity
+import raum.muchbeer.total.HomeActivity_GeneratedInjector
 import raum.muchbeer.total.R
 import raum.muchbeer.total.databinding.FragmentFinalBinding
 import raum.muchbeer.total.model.grievance.papform.PapEntryListModel
@@ -34,6 +37,8 @@ class FinalFragment : Fragment() {
         viewModel.checkOnDoneStatus.observe(viewLifecycleOwner, {
             if (it == "Success") {
                 Toast.makeText(requireContext(), "Success Entered to the database", Toast.LENGTH_LONG).show()
+                val homeIntent = Intent(requireActivity(), HomeActivity::class.java)
+                startActivity(homeIntent)
             }
         })
 return binding.root

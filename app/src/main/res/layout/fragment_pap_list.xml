@@ -36,6 +36,30 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/logo" />
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/searchPaps"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="Search Paps.."
+                    android:inputType="textPersonName"
+                    android:textColor="#999999"
+                    android:textSize="25dp"
+                    app:endIconMode="clear_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:fontFamily="@font/nunito_semibold"
+                    app:layout_constraintTop_toBottomOf="@id/image">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/searchListPaps"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="textPersonName" />
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="0dp"
@@ -45,7 +69,7 @@
                     android:textAppearance="?attr/textAppearanceHeadline5"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/image"
+                    app:layout_constraintTop_toBottomOf="@id/searchPaps"
                     tools:listitem="@layout/recorded_list_item"/>
 
 

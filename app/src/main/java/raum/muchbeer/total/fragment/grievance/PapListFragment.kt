@@ -2,6 +2,8 @@ package raum.muchbeer.total.fragment.grievance
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -36,7 +38,20 @@ class PapListFragment : Fragment() {
         })
 
         binding.recyclerView.adapter = adapter
+       binding.searchListPaps.addTextChangedListener(object : TextWatcher {
+           override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+               TODO("Not yet implemented")
+           }
 
+           override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+               TODO("Not yet implemented")
+           }
+
+           override fun afterTextChanged(p0: Editable?) {
+               TODO("Not yet implemented")
+           }
+
+       })
      callFunctionAndRetrieveData()
         return binding.root
     }
@@ -67,4 +82,40 @@ findNavController().navigate(
            }
        })
    }
+
+    /*
+  *
+private fun getSearchNameFromDb(searchText: String) {
+      var searchText = searchText
+      searchText = "%$searchText%"
+
+      viewModel.searchPaps(fullName = searchText).observe(requireActivity(),  { list ->
+          list?.let {
+              Log.e("List = ", list.toString())
+          }
+
+      })
+
+  }*/
+
+    /*val search = menu.findItem(R.id.searchItems)
+        searchView = search.actionView as androidx.appcompat.widget.SearchView
+        searchView.isSubmitButtonEnabled = true
+        searchView.setOnQueryTextListener(object: androidx.appcompat.widget.
+                                          SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    getSearchNameFromDb(query)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    getSearchNameFromDb(newText)
+                }
+                return true
+            }
+
+        })*/
 }

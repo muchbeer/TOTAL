@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.Image
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -25,6 +26,7 @@ import raum.muchbeer.total.model.DataState
 import raum.muchbeer.total.model.ImageFirestore
 import raum.muchbeer.total.model.engagement.EngageModel
 import raum.muchbeer.total.model.grievance.AgrienceModel
+import raum.muchbeer.total.model.grievance.BpapDetailModel
 import raum.muchbeer.total.model.grievance.CgrievanceModel
 import raum.muchbeer.total.model.grievance.DattachmentModel
 import raum.muchbeer.total.model.grievance.papform.PapEntity
@@ -70,6 +72,11 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
     val gson = Gson()
     val gsonPretty = GsonBuilder().setPrettyPrinting().create()
 
+    private val _checkForDataEntry = MutableLiveData<Boolean>()
+    init {
+        _checkForDataEntry.value = false
+    }
+
     val sharedPreference = context.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
     var editor = sharedPreference.edit()
 
@@ -80,6 +87,24 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         return dbGgriev.insertImages(data)
     }
 
+    suspend fun retrieveGrievancAndSaveToFirestore(agriev: AgrienceModel)  = supervisorScope{
+
+        launch {
+            if (_checkForDataEntry.value == true) {
+                Log.d("Repository", "No more data entered")
+                return@launch
+            } else {
+                db.collection("grievance").add(agriev)
+                    .addOnSuccessListener { documentReference ->
+                        _checkForDataEntry.value  = true
+                        Log.d("Repository", "Saved data to firestore successfull")
+                    }.addOnFailureListener {
+                        Log.d("Repository", "Failure with error: ${it.toString()}")
+                    }
+            }
+        }
+
+    }
     suspend fun uploadingPicture() = supervisorScope {
 
         val sdf = SimpleDateFormat("dd:hh:mm:ss")
@@ -107,12 +132,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                             ).addOnSuccessListener { documentReference ->
                                 //Update the image
                                 launch {
-                                    dbGgriev.updateImages(
-                                        ImageFirestore(
-                                            "${image.fileName}",
-                                            "${it.toString()}", "$currentDate"
-                                        )
-                                    )
+                                    dbGgriev.updateImages("${it.toString()}", "${image.fileName}")
                                     Log.d(
                                         "FragmentPhoto",
                                         "In the repository the value is updated succesful"
@@ -137,8 +157,6 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         }
 
     }
-
-
 
     val hseDataLive = dbGgriev.retrieveLiveHSE()
 
@@ -500,6 +518,24 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         return dbGgriev.insertSingleDAttachment(attachment)
     }
 
+    suspend fun retrieveFromFireStoreData() = supervisorScope {
+        launch {
+            val docRef = db.collection("grievance").document()
+            docRef.get().addOnSuccessListener { result ->
+               val agriev = result.toObject(AgrienceModel::class.java)
+
+                Log.d("FireStoreObject", "model is: ${gsonPretty.toJson(agriev)}")
+
+            }.addOnFailureListener{
+                Log.d("Firestore", "Error getting documents: ", it)
+
+            }
+        }
+    }
+
+    fun searchPaps(paps : String) : LiveData<List<PapEntryListModel>>{
+        return dbSource.searchPaps(paps)
+    }
 }
 sealed class PapListStateEvent<out T> {
     data class getListOfPap<T>(val data : T) : PapListStateEvent<T>()

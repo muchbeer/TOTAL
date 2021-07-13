@@ -60,7 +60,9 @@
         tools:layout="@layout/fragment_final" >
         <action
             android:id="@+id/action_finalFragment_to_papListFragment"
-            app:destination="@id/papListFragment" />
+            app:destination="@id/papListFragment"
+            app:popUpTo="@id/papListFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/recordedFragment"

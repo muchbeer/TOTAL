@@ -8,6 +8,7 @@ import raum.muchbeer.total.model.grievance.AgrienceModel
 import raum.muchbeer.total.model.grievance.BpapDetailModel
 import raum.muchbeer.total.model.grievance.CgrievanceModel
 import raum.muchbeer.total.model.grievance.DattachmentModel
+import raum.muchbeer.total.model.grievance.papform.PapEntryListModel
 import raum.muchbeer.total.model.hse.HseModel
 import raum.muchbeer.total.model.hse.Hsedata
 import raum.muchbeer.total.model.vehicle.VehicleModel
@@ -23,6 +24,9 @@ interface DBGrievanceSource {
     suspend fun insertListGriev(data: List<AgrienceModel>)
 
     suspend fun retrieveAgrieveList() : List<AgrienceModel>
+
+    suspend fun getSearchedGrievByNamme(fullName: String) : AgrienceModel
+
 
     //******BGrieveID***********8888
     fun retrieveBGrievDetailD() : LiveData<List<BpapDetailModel>>
@@ -41,6 +45,7 @@ interface DBGrievanceSource {
     suspend fun retrieveSingleGriev(reg_date : String) : CgrievanceModel
 
     suspend fun retrieveListOfGrievance() : List<CgrievanceModel>
+
 
     suspend fun deleteGTable()
 
@@ -107,6 +112,8 @@ interface DBGrievanceSource {
 
     suspend fun retrieveListofImages() : List<ImageFirestore>
 
-    suspend fun updateImages(data : ImageFirestore)
+    suspend fun updateImages(imageUrl: String, fileName:String)
+
+
 
 }
