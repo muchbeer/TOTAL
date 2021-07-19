@@ -14,6 +14,7 @@ import raum.muchbeer.total.model.hse.Hsedata
 import raum.muchbeer.total.model.vehicle.VehicleModel
 import raum.muchbeer.total.model.vehicle.VehiclesData
 import raum.muchbeer.total.model.vehicle.request.Vehicle
+import java.util.concurrent.Flow
 
 interface DBGrievanceSource {
 
@@ -103,9 +104,11 @@ interface DBGrievanceSource {
     //********************REQUESTED VEHICLE
   //  suspend fun insertIntoVehicle(data : VehiclesData) : Long
 
-    fun retrieveLiveVehicleRequested() : LiveData<List<Vehicle>>
+    fun retrieveLiveVehicleRequested() : kotlinx.coroutines.flow.Flow<List<Vehicle>>
 
     suspend fun insertIntoListVehicleRequested(data: List<Vehicle>)
+
+    suspend fun deleteAllPrevRequestVehicle()
 
     //Images
     suspend fun insertImages(data : ImageFirestore) : Long

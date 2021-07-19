@@ -1,10 +1,8 @@
 package raum.muchbeer.total.db.vehicledao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import raum.muchbeer.total.model.hse.Hsedata
 import raum.muchbeer.total.model.vehicle.VehicleModel
 import raum.muchbeer.total.model.vehicle.VehiclesData
@@ -33,9 +31,12 @@ interface VehicleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRequestedVehicles(userData : List<Vehicle>)
 
+    @Query("DELETE FROM request_vehicle_tbl")
+    suspend fun deleteAllVehicles()
+
 
     @Query("SELECT * FROM request_vehicle_tbl")
-    fun retrieveVehicleRequested() : LiveData<List<Vehicle>>
+    fun retrieveVehicleRequested() : Flow<List<Vehicle>>
 
     @Query("SELECT * FROM request_vehicle_tbl")
    suspend  fun retrieveSingleVehicle() : Vehicle

@@ -19,8 +19,12 @@ class DataRetroInstance {
             this.level = HttpLoggingInterceptor.Level.BODY }
 
         val client = OkHttpClient.Builder().apply {
+
             this.addInterceptor(httpLogger)
-                .connectTimeout(30, TimeUnit.SECONDS) }.build()
+                    .retryOnConnectionFailure(true)
+                    .readTimeout(10, TimeUnit.SECONDS)
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                     }.build()
     }
 
     fun dataInstance() : DataService {

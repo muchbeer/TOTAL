@@ -4,10 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -95,7 +92,7 @@ class LoginViewModel @Inject constructor(val repository: Repository,
 
 
     //****************DISPLAY PAPS
-    val receiveListOfPaps = repository.papListLiveData
+    val receiveListOfPaps = repository.getPapListFlow().asLiveData()
 
     fun searchPaps(fullName: String) : LiveData<List<PapEntryListModel>> {
         return repository.searchPaps(fullName)

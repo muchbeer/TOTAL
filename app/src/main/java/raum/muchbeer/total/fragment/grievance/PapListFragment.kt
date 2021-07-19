@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -15,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import raum.muchbeer.total.adapter.OnPapClickListener
 import raum.muchbeer.total.adapter.PapHomeAdapter
 import raum.muchbeer.total.databinding.FragmentPapListBinding
+import raum.muchbeer.total.model.PapState
 import raum.muchbeer.total.viewmodel.LoginViewModel
 
 @AndroidEntryPoint
@@ -38,20 +41,7 @@ class PapListFragment : Fragment() {
         })
 
         binding.recyclerView.adapter = adapter
-       binding.searchListPaps.addTextChangedListener(object : TextWatcher {
-           override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-               TODO("Not yet implemented")
-           }
 
-           override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-               TODO("Not yet implemented")
-           }
-
-           override fun afterTextChanged(p0: Editable?) {
-               TODO("Not yet implemented")
-           }
-
-       })
      callFunctionAndRetrieveData()
         return binding.root
     }
@@ -60,13 +50,20 @@ class PapListFragment : Fragment() {
        val sharedPreference =  requireContext().getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
        var editor = sharedPreference.edit()
 
-      binding.fab.setOnClickListener {
-                viewModel.onFabClicked()
-       }
-       viewModel.receiveListOfPaps.observe(viewLifecycleOwner, Observer {
-           if (it != null) {
-               adapter.submitList(it)
+
+       viewModel.receiveListOfPaps.observe(viewLifecycleOwner,  {  result ->
+
+           adapter.submitList(result.data)
+
+           if (result.data.isNullOrEmpty()) {
+               binding.papsProgress.visibility = View.VISIBLE
+               binding.shimmerFrameLayout.startShimmer()
+               binding.shimmerFrameLayout.visibility = View.VISIBLE
            }
+           else  binding.papsProgress.visibility = View.GONE
+           binding.shimmerFrameLayout.stopShimmer()
+           binding.shimmerFrameLayout.visibility = View.GONE
+           binding.recyclerView.visibility = View.VISIBLE
        })
 
        viewModel.navigateToFormFilling.observe(viewLifecycleOwner, { papList->
@@ -82,6 +79,11 @@ findNavController().navigate(
            }
        })
    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.shimmerFrameLayout.stopShimmer()
+    }
 
     /*
   *

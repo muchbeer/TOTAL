@@ -52,7 +52,16 @@ class SelectionFormFragment : Fragment() {
             else if (recommend=="   ") binding.hideReconmmend.visibility = View.GONE
             else binding.hideReconmmend.visibility = View.VISIBLE
         })
-    }
 
+        selectionViewModel.inputGenderType.observe(viewLifecycleOwner, {  isNull->
+            if (isNull.isNullOrEmpty()) binding.next.visibility = View.INVISIBLE
+            else binding.next.visibility = View.VISIBLE
+        })
+
+        selectionViewModel.inputInquiryType.observe(viewLifecycleOwner, { isNull ->
+            if(isNull.isNullOrEmpty()) binding.next.isEnabled = false  else
+                binding.next.isEnabled = true
+        })
+    }
 
 }

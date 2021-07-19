@@ -5,6 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import raum.muchbeer.total.db.engagedao.EngagementDao
 import raum.muchbeer.total.db.grievancedao.*
 import raum.muchbeer.total.db.hsedao.HseDao
@@ -28,7 +30,7 @@ import raum.muchbeer.total.model.vehicle.request.Vehicle
     AgrienceModel::class, BpapDetailModel::class, CgrievanceModel::class,
     DattachmentModel::class, Hsedata::class, EngageModel::class, VehiclesData::class,
     HseModel::class, Vehicle::class, VehicleModel::class, ImageFirestore::class]
-    ,     version = 38, exportSchema = false)
+    ,     version = 39, exportSchema = false)
 abstract class DataDB : RoomDatabase() {
     abstract fun PapListDao() : PapListDao
     abstract fun AgrievanceDao() : AgrievanceGeneralDao
@@ -38,10 +40,17 @@ abstract class DataDB : RoomDatabase() {
     abstract fun HseDao() : HseDao
     abstract fun EngageDao() : EngagementDao
     abstract fun VehicleDao() : VehicleDao
+
+
     companion object {
         @Volatile
         private var INSTANCE : DataDB? = null
 
+        val MIGRATION_38_39 = object : Migration(38, 39) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE c_grievance_enter_values ADD COLUMN gender TEXT DEFAULT '' NOT NULL")
+            }
+        }
         fun getDatabaseInstance(context: Context) : DataDB
         {
             synchronized(this) {
@@ -51,7 +60,7 @@ abstract class DataDB : RoomDatabase() {
                         context.applicationContext,
                         DataDB::class.java,
                         "total_db")
-                        .fallbackToDestructiveMigration()
+                        .addMigrations(MIGRATION_38_39)
                         .build()
                 }
                 return instance

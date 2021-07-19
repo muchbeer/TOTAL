@@ -1,6 +1,7 @@
 package raum.muchbeer.total.repository.impl
 
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 import raum.muchbeer.total.db.engagedao.EngagementDao
 import raum.muchbeer.total.db.grievancedao.AgrievanceGeneralDao
 import raum.muchbeer.total.db.grievancedao.BpapDetailDao
@@ -161,12 +162,16 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
     }
 
 
-    override fun retrieveLiveVehicleRequested(): LiveData<List<Vehicle>> {
+    override fun retrieveLiveVehicleRequested(): Flow<List<Vehicle>> {
         return vehiclesDao.retrieveVehicleRequested()
     }
 
     override suspend fun insertIntoListVehicleRequested(data: List<Vehicle>) {
      return vehiclesDao.insertRequestedVehicles(data)    }
+
+    override suspend fun deleteAllPrevRequestVehicle() {
+        vehiclesDao.deleteAllVehicles()
+    }
 
     override suspend fun insertImages(data: ImageFirestore) : Long {
       return   dAttachDao.insertImages(data)
@@ -175,6 +180,7 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
     override suspend fun retrieveListofImages(): List<ImageFirestore> {
         return dAttachDao.retrieveListOfImages()
     }
+
 
     override suspend fun updateImages(imageUrl: String, fileName : String) {
         dAttachDao.updateImages(imageUrl, fileName)

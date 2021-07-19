@@ -40,10 +40,10 @@ class ServerWorker @AssistedInject constructor (@Assisted val appContext: Contex
                 val database = DataDB.getDatabaseInstance(appContext)
                 //  repository.insertGrievanceToserver(it)
 
-            /*     database.AgrievanceDao().retrieveListGrievance().forEach {
+                 database.AgrievanceDao().retrieveListGrievance().forEach {
                      Log.d("ServerWorker", "WorkManager Started for AgrienceModel")
                      repository.insertGrievanceToserver(it)
-                 }*/
+                 }
                 database.HseDao().retrieveHseModel().forEach {
                     Log.d("ServerWorker", "WorkManager Started for HseModel")
                     repository.insertHseModelToServer(it)
@@ -56,6 +56,7 @@ class ServerWorker @AssistedInject constructor (@Assisted val appContext: Contex
                     Log.d("ServerWorker", "WorkManager Started for VehicleModel")
                     repository.insertVehicleModelToServer(it)
                 }
+
 
             /*    repository.uploadingPicture()
 

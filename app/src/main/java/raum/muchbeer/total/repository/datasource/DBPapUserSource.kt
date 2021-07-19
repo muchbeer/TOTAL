@@ -1,10 +1,11 @@
 package raum.muchbeer.total.repository.datasource
 
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 import raum.muchbeer.total.model.grievance.papform.PapEntryListModel
 
 interface DBPapUserSource {
-    fun retrievePapListLive() : LiveData<List<PapEntryListModel>>
+    fun retrievePapListLive() : Flow<List<PapEntryListModel>>
 
     suspend fun insertSinglePap(data : PapEntryListModel) : Long
 
@@ -12,4 +13,6 @@ interface DBPapUserSource {
 
     //*********************PAPS**********************
     fun searchPaps(fullName: String) : LiveData<List<PapEntryListModel>>
+
+    suspend fun deletepaps()
 }

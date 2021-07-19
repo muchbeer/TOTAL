@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 import raum.muchbeer.total.model.grievance.papform.PapEntryListModel
 
 @Dao
@@ -16,9 +17,11 @@ interface PapListDao {
     suspend fun insertSinglePap(papUser: PapEntryListModel) : Long
 
     @Query("SELECT * FROM paplistModel")
-    fun retrievePapUsers() : LiveData<List<PapEntryListModel>>
+    fun retrievePapUsers() : Flow<List<PapEntryListModel>>
 
     @Query("SELECT * FROM paplistModel where full_name like  :paps")
     fun getSearchResults(paps : String) : LiveData<List<PapEntryListModel>>
 
+    @Query("DELETE FROM paplistModel")
+    suspend fun deleteAllFoods()
 }

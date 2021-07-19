@@ -5,10 +5,7 @@ import android.util.Log
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.collect
@@ -75,7 +72,7 @@ class VehicleViewModel @Inject constructor (val repository: Repository,
         }
     }
 
-    val receiveVehicleRequested = repository.displayVehicles
+    val receiveVehicleRequested = repository.getVehicleListFlow().asLiveData()
 
     fun displayComplete() {    _navigateToFormFilling.value = null    }
 

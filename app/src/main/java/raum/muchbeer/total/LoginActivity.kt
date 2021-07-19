@@ -19,7 +19,6 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import raum.muchbeer.total.databinding.ActivityLoginBinding
-import raum.muchbeer.total.datastore.UserDataPref
 import raum.muchbeer.total.model.DataState
 import raum.muchbeer.total.model.users.UserModel
 import raum.muchbeer.total.viewmodel.LoginViewModel

@@ -101,6 +101,36 @@
                         android:padding="8dp"
                         android:textSize="20dp"
                         android:layout_marginTop="20dp"
+                        android:text="Select Gender: "/>
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/genderType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="20dp"
+                        android:entries="@{viewModel.liveGenderType}"
+                        app:genderType="@{viewModel.userSelectGenderType}"/>
+
+                </LinearLayout>
+                <View
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/holo_blue_dark"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:textSize="20dp"
+                        android:layout_marginTop="20dp"
                         android:text="Inquire Type: "/>
 
                     <androidx.appcompat.widget.AppCompatSpinner

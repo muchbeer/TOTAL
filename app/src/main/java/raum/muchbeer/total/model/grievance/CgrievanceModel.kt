@@ -1,6 +1,7 @@
 package raum.muchbeer.total.model.grievance
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.Expose
@@ -34,5 +35,7 @@ data class CgrievanceModel(
     @PrimaryKey(autoGenerate = false)
     val full_name : String,
     @SerializedName("inquirytype")
-    val inquirytype : String
+    val inquirytype : String,
+    @SerializedName("gender")
+    val gender : String
 ) : Parcelable

@@ -79,6 +79,18 @@ fun listenEnquiryType(spinner: AppCompatSpinner, result: ObservableField<String>
     }
 }
 
+@BindingAdapter("genderType")
+fun listenGenderType(spinner: AppCompatSpinner, result: ObservableField<String>) {
+    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+
+        }
+
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            result.set(parent?.getItemAtPosition(position) as String)
+        }
+    }
+}
 
 @BindingAdapter("recommendation")
 fun listenRecommendation(spinner: AppCompatSpinner, result: ObservableField<String>) {

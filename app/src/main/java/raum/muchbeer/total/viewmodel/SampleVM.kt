@@ -1,8 +1,6 @@
 package raum.muchbeer.total.viewmodel
 
-import android.R.attr.path
 import android.content.Context
-import android.graphics.Bitmap
 import android.util.Base64
 import android.util.Base64OutputStream
 import android.util.Log
@@ -25,7 +23,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -40,9 +37,15 @@ class SampleVM @Inject constructor(val repository: Repository,
      val inputAgreeToSign : LiveData<String>
         get() = _inputAgreeToSign
 
+
+    private var _checkNulinput = MutableLiveData<Boolean>()
+    val checkNulinput : LiveData<Boolean>
+        get() = _checkNulinput
+
     private var _displayJson = MutableLiveData<String>()
     val displayJson : LiveData<String>
         get() = _displayJson
+
 
     private var _checkLandSample = MutableLiveData<String>()
     private var _checkHouseSample = MutableLiveData<String>()
@@ -64,12 +67,15 @@ class SampleVM @Inject constructor(val repository: Repository,
 
     private var _noRecommendation = MutableLiveData<String>()
     private var _inputEntryStatus = MutableLiveData<String>()
+    val inputEntryStatus : LiveData<String>
+        get() = _inputEntryStatus
 
     var liveAgreeSigns = mutableListOf<String>()
     var liveSatisfyContract = mutableListOf<String>()
     var liveEntriesStatus = mutableListOf<String>()
     var liveRecommendation = mutableListOf<String>()
     var liveInquireType = mutableListOf<String>()
+    var liveGenderType = mutableListOf<String>()
 
     //Photo input
     var _inputPhotoComment = MutableLiveData<String>()
@@ -82,20 +88,39 @@ class SampleVM @Inject constructor(val repository: Repository,
     val sharedPreference =  context.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
     val editor = sharedPreference.edit()
 
+    private var _inputInquiryType = MutableLiveData<String>()
+    val inputInquiryType : LiveData<String>
+        get() = _inputInquiryType
+
+    private var _inputGenderType = MutableLiveData<String>()
+       val inputGenderType : LiveData<String>
+            get() = _inputGenderType
+
     init {
 
         liveAgreeSigns = mutableListOf("   ", "Yes", "No")
         liveSatisfyContract = mutableListOf("   ", "Yes", "No")
         liveEntriesStatus = mutableListOf("    ", "Open", "In Progress", "Closes")
         liveRecommendation = mutableListOf("   ", "Yes", "No")
-        liveInquireType = mutableListOf("   ", "Grievance", "Issue", "Query", "Concern")
+        liveInquireType = mutableListOf("", "Grievance", "Issue", "Query", "Concern")
+        liveGenderType = mutableListOf("", "Male", "Female")
+
     }
 
-        private var _inputInquiryType = MutableLiveData<String>()
+
     val userSelectInquiryType = ObservableField<String>().apply {
         addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                 _inputInquiryType.value = get()
+            }
+        })
+    }
+
+
+    val userSelectGenderType = ObservableField<String>().apply {
+        addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                _inputGenderType.value = get()
             }
         })
     }
@@ -175,6 +200,12 @@ class SampleVM @Inject constructor(val repository: Repository,
         })
     }
 
+   fun checkIfNullable()   {
+       if (_inputGenderType.value !=null && _inputInquiryType.value!=null) {
+           _checkNulinput.value = true } else   _checkNulinput.value = false
+
+   }
+
     fun checkLand(isLand: Boolean) {
         if (isLand) _checkLandSample.value = "Land"
         else _checkLandSample.value="None"     }
@@ -194,6 +225,7 @@ class SampleVM @Inject constructor(val repository: Repository,
     fun checkGraves(isGrave: Boolean) {
         if (isGrave) _checkGraveSample.value = "Graves"
         else _checkGraveSample.value="None"     }
+
 
     fun grievenceDB() = viewModelScope.launch{
             Log.d("SampleVM", "Value obtained is : ${_inputAgreeToSign.value}")
@@ -226,7 +258,8 @@ class SampleVM @Inject constructor(val repository: Repository,
                 "${_combineGrievanceType.value}",
                 "${_inputCompasationComment.value}",
                 "${full_name}",
-                "${_inputInquiryType.value}"
+                "${_inputInquiryType.value}",
+                "${_inputGenderType.value}"
         )
         editor.putString("reg_date", "${currentDate}")
         editor.apply()
