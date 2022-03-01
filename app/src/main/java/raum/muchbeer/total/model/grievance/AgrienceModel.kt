@@ -3,7 +3,6 @@ package raum.muchbeer.total.model.grievance
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import raum.muchbeer.total.db.Converters
 

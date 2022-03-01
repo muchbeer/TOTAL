@@ -10,19 +10,19 @@ data class EngageModel(
     val api_key: String,
     @SerializedName("field_id")
     val field_id: String,
-    @SerializedName("keypoints")
+   @SerializedName("keypoints")
     val keypoints: String,
-    @SerializedName("listofparticipants")
+   @SerializedName("listofparticipants")
     val listofparticipants: String,
-    @SerializedName("meeting_time")
+   @SerializedName("meeting_time")
     val meeting_time: String,
-    @SerializedName("number_of_participants")
+   @SerializedName("number_of_participants")
     val number_of_participants: String,
     @SerializedName("user_name")
     val user_name: String,
-     @SerializedName("locationtype")
+    @SerializedName("locationtype")
      val locationtype : String,
     @PrimaryKey(autoGenerate = false)
-    @SerializedName("reg_date")
+   @SerializedName("reg_date")
     val reg_date : String
 )

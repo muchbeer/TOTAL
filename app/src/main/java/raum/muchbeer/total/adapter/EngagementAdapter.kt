@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import raum.muchbeer.total.databinding.EngageListItemBinding
 import raum.muchbeer.total.model.engagement.EngageModel
-import raum.muchbeer.total.model.grievance.papform.PapEntryListModel
 
 class EngagementAdapter(val onClickListener: OnEngageClickListener) :
     ListAdapter<EngageModel, EngagementAdapter.EngageVH>(engDiffUtil){

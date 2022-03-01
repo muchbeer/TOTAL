@@ -1,7 +1,6 @@
 package raum.muchbeer.total.repository
 
 import android.content.Context
-import android.media.Image
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -18,14 +17,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
 import raum.muchbeer.total.BuildConfig
 import raum.muchbeer.total.api.DataService
 import raum.muchbeer.total.model.DataState
 import raum.muchbeer.total.model.ImageFirestore
 import raum.muchbeer.total.model.engagement.EngageModel
 import raum.muchbeer.total.model.grievance.AgrienceModel
-import raum.muchbeer.total.model.grievance.BpapDetailModel
 import raum.muchbeer.total.model.grievance.CgrievanceModel
 import raum.muchbeer.total.model.grievance.DattachmentModel
 import raum.muchbeer.total.model.grievance.papform.PapEntity
@@ -43,7 +40,6 @@ import raum.muchbeer.total.model.vehicle.request.RequestVehicleModel
 import raum.muchbeer.total.model.vehicle.request.Vehicle
 import raum.muchbeer.total.repository.datasource.DBGrievanceSource
 import raum.muchbeer.total.repository.datasource.DBPapUserSource
-import raum.muchbeer.total.repository.datasource.NetDataSource
 import java.io.FileInputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -51,7 +47,6 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
-import kotlin.collections.ArrayList
 
 @Singleton
 class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
@@ -77,7 +72,6 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
    private val listPaps = MutableLiveData<List<PapEntryListModel>>()
     private val listVehicles = MutableLiveData<List<Vehicle>>()
 
-
     init {
         _checkForDataEntry.postValue(false)
     }
@@ -86,7 +80,6 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
     var editor = sharedPreference.edit()
 
     private var storageReferenence = FirebaseStorage.getInstance().getReference()
-
 
     suspend fun insertingImages(data: ImageFirestore): Long {
         return dbGgriev.insertImages(data)
@@ -179,7 +172,6 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         return dbGgriev.insertIntoSingeHSEModel(data)
     }
 
-
     //*********************Engagement********************8
     suspend fun insertToEngagement(data: EngageModel): Long {
         return dbGgriev.insertIntoEngagement(data)
@@ -193,6 +185,9 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         try {
             val response = engageService.sendEngageDataToServer(requestBody)
             if (response.isSuccessful) {
+                if (response.body() == null) {
+                    return
+                }
                 val gson2 = GsonBuilder().setPrettyPrinting()
                     .create()
                 val prettyJson = gson2.toJson(
@@ -205,12 +200,10 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         }
     }
 
-
     //*********************Grievance*********************
     suspend fun retrieveListOfGrievance(): List<CgrievanceModel> {
         return dbGgriev.retrieveListOfGrievance()
     }
-
 
     val cgrievanceLiveData = dbGgriev.retrieveCGrievEntries()
 
@@ -225,6 +218,9 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         try {
             val response = generalGriev.sendGrievanceDataToServer(requestBody)
             if (response.isSuccessful) {
+                if (response.body() == null) {
+                    return
+                }
                 val gson2 = GsonBuilder().setPrettyPrinting()
                     .create()
                 val prettyJson = gson2.toJson(
@@ -255,9 +251,6 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
 
 
     //********************Attachment**********************
-    suspend fun retrieveListOfAttachment(): List<DattachmentModel> {
-        return dbGgriev.retrieveListOfAttachment()
-    }
 
     suspend fun retrieveAttachment(unique_data : String) : DattachmentModel {
         return dbGgriev.retrieveSingleAttach(unique_data)}
@@ -269,10 +262,6 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
 
     suspend fun insertToSingleVehicle(data: VehicleModel): Long {
         return dbGgriev.insertIntoVehicleModel(data)
-    }
-
-    suspend fun retrieveListOfVehicle(): List<VehicleModel> {
-        return dbGgriev.retrieveListVehicleModel()
     }
 
     suspend fun insertVehicleModelToServer(vehicleModel: VehicleModel) {
@@ -394,6 +383,15 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
             try {
                 val response = grievanceService.sendLoginGrievance(requestBody)
                 if (response.isSuccessful) {
+
+                    if (response.body() ==null) {
+                        emit(DataState.Error("Please check your internet and Try again"))
+                        return@flow
+                    } else if (response.code() !=200) {
+                        emit(DataState.Error("Please check your server and Try again"))
+                        return@flow
+                    }
+
                     Log.d("Repository", "grievancce user login successful sent and received:")
 
                     val prettyJson = gsonPretty.toJson(
@@ -421,6 +419,10 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                         emit(DataState.Error("Fail to Login, Please try again"))
                         Log.d("Repository", "The validation is: 204 and Invalid is called")
                     }
+
+
+                } else {
+                    emit(DataState.Error("Please check your network"))
                 }
 
             } catch (e: Exception) {
@@ -442,6 +444,11 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         try {
             val response = paplistService.sendData(requestBody)
             if (response.isSuccessful) {
+
+                if (response.body() == null) {
+                    PapListStateEvent.Error("Please check your network")
+                    return
+                }
                 Log.d("Repository", "RetrieveData function clicked and paplist successful sent:")
 
                 // Convert raw JSON to pretty JSON using GSON library
@@ -452,7 +459,22 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                     JsonParser.parseString(response.body()?.string())
                 )
 
-                val jsonObject = JSONObject(prettyJson)
+                    val papResult = gson2.fromJson(prettyJson, PapEntryModel::class.java)
+                Log.d("Repository", "Result Description after login : ${papResult.statusDesc}")
+            papResult.paplist.forEach { papEntry ->
+             val checkRecord =   dbSource.insertSinglePap(papEntry)
+                listPaps.postValue(papResult.paplist)
+
+                if (checkRecord > -1) {
+                    PapListStateEvent.Success(papEntry)
+                    Log.d("Repository", "Record inserted successfull")
+                }
+            }
+
+              /*  val user = gsonPretty.fromJson(prettyJson, PapEntryModel::class.java)
+                Log.d("Repository", "PapListItem Item is : ${user.statusDesc}")*/
+
+/*                val jsonObject = JSONObject(prettyJson)
                 val jsonArray = jsonObject.getJSONArray("paplist")
                 Log.d("Repository", "paplist are : ${jsonArray}")
                 val papEntity = mutableListOf<PapEntryListModel>()
@@ -479,17 +501,8 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                         PapListStateEvent.getListOfPap(papEntry)
                         Log.d("Repository", "Record inserted successfull")
                     }
-                    Log.d(
-                        "Repository",
-                        "value of name user: ${
-                            jsonArray.getJSONObject(i).getString("valuation_number")
-                        }"
-                    )
-                }
 
-                listPaps.postValue(papEntity)
-                val user = gsonPretty.fromJson(prettyJson, PapEntryModel::class.java)
-                Log.d("Repository", "PapListItem Item is : ${user.statusDesc}")
+                }*/
 
             }
 
@@ -512,7 +525,6 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                 dbSource.insertListPap(it!!)
             }
     )
-
 
     //*******************HSE***********************************
 
@@ -578,7 +590,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
     }
 }
 sealed class PapListStateEvent<out T> {
-    data class getListOfPap<T>(val data : T) : PapListStateEvent<T>()
+    data class Success<T>(val data : T) : PapListStateEvent<T>()
     data class Error(val error: String) : PapListStateEvent<Nothing>()
     object Loading : PapListStateEvent<Nothing>()
 

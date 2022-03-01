@@ -13,12 +13,10 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.work.*
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import raum.muchbeer.total.databinding.ActivityLoginBinding
+import raum.muchbeer.total.databinding.NewLoginBinding
 import raum.muchbeer.total.model.DataState
 import raum.muchbeer.total.model.users.UserModel
 import raum.muchbeer.total.viewmodel.LoginViewModel
@@ -29,14 +27,14 @@ import java.util.concurrent.TimeUnit
 class LoginActivity : AppCompatActivity() {
     lateinit var aOneTimeSync: OneTimeWorkRequest
 
-    private lateinit var binding: ActivityLoginBinding
+    private lateinit var binding: NewLoginBinding
     private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
+        binding = DataBindingUtil.setContentView(this, R.layout.new_login)
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
