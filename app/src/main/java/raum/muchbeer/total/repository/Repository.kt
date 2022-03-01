@@ -460,10 +460,11 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                 )
 
                     val papResult = gson2.fromJson(prettyJson, PapEntryModel::class.java)
+                  listPaps.postValue(papResult.paplist)
                 Log.d("Repository", "Result Description after login : ${papResult.statusDesc}")
             papResult.paplist.forEach { papEntry ->
              val checkRecord =   dbSource.insertSinglePap(papEntry)
-                listPaps.postValue(papResult.paplist)
+
 
                 if (checkRecord > -1) {
                     PapListStateEvent.Success(papEntry)
@@ -564,7 +565,6 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
     }
 
     val retrieveHseDataLive: LiveData<List<Hsedata>> = dbGgriev.retrieveLiveHSE()
-
 
     suspend fun insertToDAttachment(attachment: DattachmentModel): Long {
         return dbGgriev.insertSingleDAttachment(attachment)
