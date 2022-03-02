@@ -3,12 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/muchbeer/AndroidStudioProjects/TOTAL/app/src/main/res/drawable/ic_search.xml" value="0.17604166666666668" />
         <entry key="..\:/Users/muchbeer/AndroidStudioProjects/TOTAL/app/src/main/res/drawable/new_logo.xml" value="0.22" />
         <entry key="..\:/Users/muchbeer/AndroidStudioProjects/TOTAL/app/src/main/res/drawable/rounded_corner.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/muchbeer/AndroidStudioProjects/TOTAL/app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="..\:/Users/muchbeer/AndroidStudioProjects/TOTAL/app/src/main/res/layout/engage_list_item.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/muchbeer/AndroidStudioProjects/TOTAL/app/src/main/res/layout/fragment_pap_list.xml" value="0.1" />
         <entry key="..\:/Users/muchbeer/AndroidStudioProjects/TOTAL/app/src/main/res/layout/hse_list_item.xml" value="0.22" />
-        <entry key="..\:/Users/muchbeer/AndroidStudioProjects/TOTAL/app/src/main/res/layout/new_login.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/muchbeer/AndroidStudioProjects/TOTAL/app/src/main/res/layout/new_login.xml" value="0.13333333333333333" />
         <entry key="..\:/Users/muchbeer/AndroidStudioProjects/TOTAL/app/src/main/res/layout/pap_g_item.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/muchbeer/AndroidStudioProjects/TOTAL/app/src/main/res/layout/pap_g_item_holder.xml" value="0.1" />
         <entry key="..\:/Users/muchbeer/AndroidStudioProjects/TOTAL/app/src/main/res/layout/recorded_list_item.xml" value="0.1" />

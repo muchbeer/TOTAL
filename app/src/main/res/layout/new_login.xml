@@ -56,6 +56,7 @@
             android:hint="Enter Password"
             app:startIconDrawable="@drawable/ic_password"
             app:endIconMode="password_toggle"
+            app:endIconDrawable="@drawable/ic_clear"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText

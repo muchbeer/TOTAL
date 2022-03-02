@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -83,6 +84,19 @@ findNavController().navigate(
     override fun onPause() {
         super.onPause()
         binding.shimmerFrameLayout.stopShimmer()
+    }
+
+    private fun searchPaps() {
+        binding.searchPaps.editText?.doOnTextChanged { searchPap, _, _, _ ->
+          //consider the below code when the user enter a text to clear search icon
+            if(!searchPap.isNullOrBlank())
+            binding.searchPaps.isStartIconVisible = false
+        }
+
+        //manual handle on click end
+        binding.searchPaps.setEndIconOnClickListener {
+            //clear the text
+        }
     }
 
     /*
