@@ -12,20 +12,26 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.work.*
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import raum.muchbeer.total.databinding.NewLoginBinding
 import raum.muchbeer.total.model.DataState
 import raum.muchbeer.total.model.users.UserModel
+import raum.muchbeer.total.utils.Constant
+import raum.muchbeer.total.utils.Constant.Companion.PREFERENCE_NAME
 import raum.muchbeer.total.viewmodel.LoginViewModel
 import raum.muchbeer.total.work.ServerWorker
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
-    lateinit var aOneTimeSync: OneTimeWorkRequest
 
     private lateinit var binding: NewLoginBinding
     private val viewModel: LoginViewModel by viewModels()
@@ -59,44 +65,43 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun checkStatus() {
-        viewModel.read_status_Code.observe(this, {
-            if (it == "200") {
-                openLogin()
-            } else checkLoginState()
-        })
-    }
 
     private fun checkLoginState() {
-        viewModel.loginState.observe(this, {
-            when (it) {
-                is DataState.Success<UserModel> -> {
-                    //  storeUserFieldID(it.data.field_id)
-                    if (it.data.position == "Data Officer") {
-                        openLogin()
-                        displayProgressBar(false)
 
-                    } else if (it.data.position == "HSE/Logistics Officer") {
-                        openHse()
-                        //   openDriver()
-                        displayProgressBar(false)
-                    } else if (it.data.position == "Engagement Officer") {
-                        openEngageOffice()
-                        Log.d("LoginActivity", "Entered")
-                        displayProgressBar(false)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loginState.collect {
+                    when (it) {
+                        is DataState.Success<UserModel> -> {
+                            //  storeUserFieldID(it.data.field_id)
+                            if (it.data.position == "Data Officer") {
+                                openLogin()
+                                displayProgressBar(false)
+
+                            } else if (it.data.position == "HSE/Logistics Officer") {
+                                openHse()
+
+                                displayProgressBar(false)
+                            } else if (it.data.position == "Engagement Officer") {
+                                openEngageOffice()
+                                Log.d(TAG, "Entered")
+                                displayProgressBar(false)
+                            }
+
+                        }
+                        is DataState.Error -> {
+                            displayProgressBar(false)
+                            displayErrorMsg(it.error)
+                        }
+
+                        is DataState.Loading -> {
+                            displayProgressBar(true)
+                        }
                     }
-
-                }
-                is DataState.Error -> {
-                    displayProgressBar(false)
-                    displayErrorMsg(it.error)
-                }
-
-                is DataState.Loading -> {
-                    displayProgressBar(true)
                 }
             }
-        })
+        }
+
     }
 
     private fun hideKeyboard() {
@@ -119,10 +124,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun displayErrorMsg(errorMsg: String?) {
-        val snackBar = Snackbar.make(
-            binding.generalLayout, "Invalid User. Try Again",
-            Snackbar.LENGTH_LONG
-        )
 
         if (errorMsg != null) {
 
@@ -134,7 +135,7 @@ class LoginActivity : AppCompatActivity() {
             textView.setTextColor(Color.BLUE)
             snackBar.show()
 
-            Log.d("LoginActivity", "error is : ${errorMsg}")
+            Log.d(TAG, "error is : ${errorMsg}")
         } else {
             Snackbar.make(binding.generalLayout, "Unknown Error", Snackbar.LENGTH_SHORT)
                 .show()
@@ -155,7 +156,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val sharedPreference = getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
+        val sharedPreference = getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
 
         viewModel.retrieveFromFirestore()
         //  checkStatus()
@@ -167,7 +168,7 @@ class LoginActivity : AppCompatActivity() {
             //   openDriver()
         } else if (position == "Engagement Officer") {
             openEngageOffice()
-            Log.d("LoginActivity", "Entered")
+            Log.d(TAG, "Entered")
             //  displayProgressBar(false)
         }
     }
@@ -186,47 +187,45 @@ class LoginActivity : AppCompatActivity() {
                 WorkManager.getInstance(this).enqueue(work)
 
                 //Get WorkManager status
-                WorkManager.getInstance(this).getWorkInfoByIdLiveData(work.id).observe(this,
-                    Observer {
+                WorkManager.getInstance(this).getWorkInfoByIdLiveData(work.id).observe(this)
+                     {
                         if (it != null) {
                             when (it.state) {
 
                                 WorkInfo.State.SUCCEEDED -> {
-                                    val myResult = it.outputData.getString("Success")
-                                    Log.e("STATUS", "SUCCEEDED")
+                                   Log.e(TAG, "SUCCEEDED")
                                 }
 
                                 WorkInfo.State.RUNNING -> {
-                                    Log.e("STATUS", "RUNNING")
+                                    Log.e(TAG, "RUNNING")
                                 }
 
                                 WorkInfo.State.CANCELLED -> {
-                                    Log.e("STATUS", "CANCELLED")
+                                    Log.e(TAG, "CANCELLED")
                                 }
 
                                 WorkInfo.State.FAILED -> {
-                                    Log.e("STATUS", "FAILED")
+                                    Log.e(TAG, "FAILED")
                                 }
                                 else -> {
-                                    Log.e("STATUS", "STATUS")
+                                    Log.e(TAG, "STATUS")
                                 }
                             }
                         }
 
-                    })
+                    }
             }
 
     private fun setConstraint(): Constraints {
 
         return Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED) // check internet connectivity
-            //.setRequiresBatteryNotLow(true) // check battery level
-            // .setRequiresCharging(true) // check charging mode
-             .setRequiresStorageNotLow(true) // check storage
-            // .setRequiresDeviceIdle(false) // check device idle state
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+             .setRequiresStorageNotLow(true)
             .build()
 
     }
-
+companion object {
+    private val TAG = LoginActivity::class.simpleName
+}
 
 }

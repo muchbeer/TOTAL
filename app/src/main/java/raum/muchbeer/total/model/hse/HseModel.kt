@@ -4,8 +4,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
-import raum.muchbeer.total.db.Converters
-import raum.muchbeer.total.model.hse.Hsedata
 
 @Entity(tableName = "hse_general_table")
 data class HseModel(
@@ -18,8 +16,21 @@ data class HseModel(
     @PrimaryKey(autoGenerate = false)
     val hse_key : String,
     @SerializedName("hsedata")
-    @TypeConverters(Converters::class)
     val hsedata: List<Hsedata>
 )
 
+@Entity(tableName = "hse")
+data class Hsedata(
+    val accomodations: String,
+    val anyobservation: String,
+    val anysecurityissue: String,
+    val car_inspection_report: String,
+    val didanyincidentoccor: String,
+    val ifincidentoccored: String,
+    @PrimaryKey(autoGenerate = false)
+    val primary_key: String,
+    val reg_date: String,
+    val securityissueyes: String,
+    val toolboxtopics: String,
+    val anycomment : String)
 

@@ -1,8 +1,8 @@
 package raum.muchbeer.total.viewmodel
 
+import CgrievanceModel
+import DattachmentModel
 import android.content.Context
-import android.util.Base64
-import android.util.Base64OutputStream
 import android.util.Log
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
@@ -15,22 +15,19 @@ import com.google.gson.GsonBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
-import raum.muchbeer.total.model.ImageFirestore
-import raum.muchbeer.total.model.grievance.CgrievanceModel
-import raum.muchbeer.total.model.grievance.DattachmentModel
 import raum.muchbeer.total.repository.Repository
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import raum.muchbeer.total.utils.Constant
+import raum.muchbeer.total.utils.Constant.Companion.DEFAULT_VALUE
+import raum.muchbeer.total.utils.Constant.Companion.PREFERENCE_NAME
+import raum.muchbeer.total.utils.Constant.Companion.VALUTION_NO_API
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
 
 @HiltViewModel
-class SampleVM @Inject constructor(val repository: Repository,
-                                   @ApplicationContext val context: Context
+class GrievanceViewModel @Inject constructor(val repository: Repository,
+                                             @ApplicationContext val context: Context
 ) :ViewModel() {
 
     private var _inputAgreeToSign = MutableLiveData<String>()
@@ -38,14 +35,9 @@ class SampleVM @Inject constructor(val repository: Repository,
         get() = _inputAgreeToSign
 
 
-    private var _checkNulinput = MutableLiveData<Boolean>()
-    val checkNulinput : LiveData<Boolean>
-        get() = _checkNulinput
-
     private var _displayJson = MutableLiveData<String>()
     val displayJson : LiveData<String>
         get() = _displayJson
-
 
     private var _checkLandSample = MutableLiveData<String>()
     private var _checkHouseSample = MutableLiveData<String>()
@@ -85,8 +77,9 @@ class SampleVM @Inject constructor(val repository: Repository,
     val gsonPretty = GsonBuilder().
     setPrettyPrinting().create()
 
-    val sharedPreference =  context.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
+    val sharedPreference =  context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
     val editor = sharedPreference.edit()
+    val valuation_id = sharedPreference.getString(VALUTION_NO_API, DEFAULT_VALUE)
 
     private var _inputInquiryType = MutableLiveData<String>()
     val inputInquiryType : LiveData<String>
@@ -136,7 +129,7 @@ class SampleVM @Inject constructor(val repository: Repository,
     val userSelectEntryStatus = ObservableField<String>().apply {
         addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                Log.d("SelectVM", "Select entry status is : ${get()}")
+                Log.d(TAG, "Select entry status is : ${get()}")
                 _inputEntryStatus.value = get()
             }
         })
@@ -178,7 +171,7 @@ class SampleVM @Inject constructor(val repository: Repository,
         addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                 _noAgreementToSign.value = get()
-                Log.d("SampleVM", "selected no agreement is : ${_noAgreementToSign.value}")
+                Log.d(TAG, "selected no agreement is : ${_noAgreementToSign.value}")
             }
         })
     }
@@ -199,12 +192,6 @@ class SampleVM @Inject constructor(val repository: Repository,
             }
         })
     }
-
-   fun checkIfNullable()   {
-       if (_inputGenderType.value !=null && _inputInquiryType.value!=null) {
-           _checkNulinput.value = true } else   _checkNulinput.value = false
-
-   }
 
     fun checkLand(isLand: Boolean) {
         if (isLand) _checkLandSample.value = "Land"
@@ -228,124 +215,72 @@ class SampleVM @Inject constructor(val repository: Repository,
 
 
     fun grievenceDB() = viewModelScope.launch{
-            Log.d("SampleVM", "Value obtained is : ${_inputAgreeToSign.value}")
-        Log.d("SampleVM", "Value obtained inputCompesation is : ${_inputCompasationComment.value}")
-        Log.d("SampleVM", "Value obtained is : ${_inputAgreeToSign.value}")
-        Log.d("SampleVM", "Value obtained Animal : ${_checkAnimalSample.value}")
-        Log.d("SampleVM", "Value obtained is Crop : ${_checkCropSample.value}")
-        Log.d("SampleVM", "Value obtained is No agreement : ${_noAgreementToSign.value}")
-        Log.d("SampleVM", "Value obtained is Recommendation: ${_noRecommendation.value}")
-        Log.d("SampleVM", "Value obtained is EntryStatus: ${_inputEntryStatus.value}")
-        Log.d("SampleVM", "Value obtained is AgreeTo Sign: ${_inputAgreeToSign.value}")
+        Log.d(TAG, "agreeToSign obtained is : ${_inputAgreeToSign.value}")
+        Log.d(TAG, " inputCompesation is : ${_inputCompasationComment.value}")
+        Log.d(TAG, "CheckAnimal obtained : ${_checkAnimalSample.value}")
+        Log.d(TAG, "CheckCrop obtained is : ${_checkCropSample.value}")
+        Log.d(TAG, " No agreement obtained : ${_noAgreementToSign.value}")
+        Log.d(TAG, " Recommendation obtained : ${_noRecommendation.value}")
+        Log.d(TAG, " EntryStatus obtained : ${_inputEntryStatus.value}")
+        Log.d(TAG, " AgreeTo Sign obtained : ${_inputAgreeToSign.value}")
+
         _combineGrievanceType.value = "${_checkAnimalSample.value}"+ "  ${_checkGraveSample.value}" +
                 "  ${_checkHouseSample.value}" + "  ${_checkLandSample.value}" + "  ${_checkCropSample.value}"
-        Log.d("SampleVM", "Value obtained is Type is Sign: ${_combineGrievanceType.value}")
+        Log.d(TAG, "Value obtained is Type is Sign: ${_combineGrievanceType.value}")
 
         val sdf = SimpleDateFormat("yyyy-M-dd hh:mm:ss")
         val currentDate = sdf.format(Date())
 
-        val full_name = sharedPreference.getString("full_name", "default")
+        val full_name = sharedPreference.getString(Constant.FULL_NAME, "default")
 
         val cgrienvance = CgrievanceModel(
-                "${_inputAgreeToSign.value}",
-                "${_noAgreementToSign.value}",
-                "${_inputSatisfyContract.value}",
-                "${_noSatisfyContract.value}",
-                "${_inputRecommendation.value}",
-                "_${_noRecommendation.value}",
-                "${_inputEntryStatus.value}",
-                "${currentDate}",
-                "${_combineGrievanceType.value}",
-                "${_inputCompasationComment.value}",
-                "${full_name}",
-                "${_inputInquiryType.value}",
-                "${_inputGenderType.value}"
+                agreetosign = "${_inputAgreeToSign.value}",
+                notagreetosign = "${_noAgreementToSign.value}",
+                satisfiedwithcontract = "${_inputSatisfyContract.value}",
+                notsatisfiedwithcontract = "${_noSatisfyContract.value}",
+                anyrecomendations = "${_inputRecommendation.value}",
+                recomendations = "_${_noRecommendation.value}",
+                gstatus = "${_inputEntryStatus.value}",
+                reg_date = currentDate,
+                grievancetype = "${_combineGrievanceType.value}",
+                grievanceexplanation = "${_inputCompasationComment.value}",
+                full_name = full_name!!,
+                inquirytype = "${_inputInquiryType.value}",
+                gender =  "${_inputGenderType.value}",
+                valuation_no = valuation_id!!
         )
-        editor.putString("reg_date", "${currentDate}")
+        editor.putString("reg_date", currentDate)
         editor.apply()
         editor.commit()
 
-        Log.d("Grievance", "Griev Object is : ${cgrienvance}")
-     val checkGrive=   repository.insertToCgrienvance(cgrienvance)
-        if (checkGrive > -1) Log.d("SampleVM", "Griev Database inserted") else
-             Log.d("SampleVM", "Error insert into Grievance")
+        Log.d(TAG, "Griev Object is : $cgrienvance")
+        val checkGrive=   repository.insertToCgrienvance(cgrienvance)
 
-      /*  val bpapDetails = BpapDetailModel("${valuation_id}", listOf(cgrienvance),
-            listOf(dAttach))
-*/
+        if (checkGrive > -1) Log.d("SampleVM", "Griev Database inserted") else
+             Log.d(TAG, "Error insert into Grievance")
+
+
+
     }
 
     fun attachMentDB() = viewModelScope.launch {
         val randomNumber = (100..200000).random()
 
-        val dAttach = DattachmentModel("${_inputPhotoComment.value}", "image", "${_inputPhotoUrl.value}", "${randomNumber}")
-        editor.putString("unique_data", "${randomNumber}")
+        val dAttach = DattachmentModel(
+            category_name = "${_inputPhotoComment.value}",
+            file_name ="Input Description",
+            file_url = "${_inputPhotoUrl.value}",
+            isUploaded=false,
+            valuation_number = valuation_id!!)
+        editor.putString(Constant.UNIQUE_DATA, "${randomNumber}")
         editor.apply()
         editor.commit()
         val checkAttachment =  repository.insertToDAttachment(dAttach)
-        if (checkAttachment > -1) Log.d("SampleVM", "Attachment Database inserted") else
-        Log.d("SampleVM", "Error Inserted into Attachment")
+        if (checkAttachment > -1) Log.d(TAG, "Attachment Database inserted") else
+        Log.d(TAG, "Error Inserted into Attachment")
 
     }
 
-    fun convertImageFileToBase64(imageFile: File): String {
-        return ByteArrayOutputStream().use { outputStream ->
-            Base64OutputStream(outputStream, Base64.DEFAULT).use { base64FilterStream ->
-                imageFile.inputStream().use { inputStream ->
-                    inputStream.copyTo(base64FilterStream)
-                }
-            }
-            return@use outputStream.toString()
-        }
-    }
-
-    fun convertFileImageToBase64(imageFile: File) =viewModelScope.launch {
-        val sdf = SimpleDateFormat("dd-mm-yyyy:hh:mm:ss")
-        val currentDate = sdf.format(Date())
-        ByteArrayOutputStream().use { outputStream ->
-            Base64OutputStream(outputStream, Base64.DEFAULT).use { base64FilterStream ->
-                imageFile.inputStream().use { inputStream ->
-                    inputStream.copyTo(base64FilterStream)
-                }
-            }
-            Log.d("PhotoFragment", "The best one is base64 is : ${outputStream}")
-            _inputPhotoUrl.value = imageFile.toString()
-         val checkImage=   repository.insertingImages(ImageFirestore("${imageFile}",
-             "gadiel",  "${currentDate}" ))
-            Log.d("PhotoFragment", "ImageInserted record Number: ${checkImage}")
-        }
-    }
-
-    fun convertFileImagefromJavaConvert(path: File) = viewModelScope.launch{
-        val fout = FileOutputStream(path.toString() + ".txt")
-        val fin = FileInputStream(path)
-
-        System.out.println("File Size:" + path.length())
-
-        val os = ByteArrayOutputStream()
-        val base64out = Base64OutputStream(os, Base64.NO_WRAP)
-
-        val buffer = ByteArray(3 * 512)
-        var len = 0
-        while (fin.read(buffer).also { len = it } >= 0) {
-            base64out.write(buffer, 0, len)
-        }
-
-        println("Encoded Size:" + os.size())
-
-        base64out.flush()
-        base64out.close() //this did the tricks. Please see explanation.
-
-
-        val result = String(os.toByteArray(), Charsets.UTF_8)
-
-        fout.write(os.toByteArray())
-        fout.flush()
-        fout.close()
-        os.close()
-        fin.close()
-
-        Log.d("FragmentPhoto", "Another byte64 from Java is : ${result}")
-    }
-
+companion object {
+    private val TAG = GrievanceViewModel::class.simpleName  }
 }

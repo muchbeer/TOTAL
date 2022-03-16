@@ -22,6 +22,9 @@ interface PapListDao {
     @Query("SELECT * FROM paplistModel where full_name like  :paps")
     fun getSearchResults(paps : String) : LiveData<List<PapEntryListModel>>
 
+    @Query("SELECT * FROM paplistModel where full_name like '%' || :papList || '%'")
+    fun searchPaps(papList : String) : Flow<List<PapEntryListModel>>
+
     @Query("DELETE FROM paplistModel")
     suspend fun deleteAllFoods()
 }

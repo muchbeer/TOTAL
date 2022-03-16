@@ -8,15 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import raum.muchbeer.total.HomeActivity
-import raum.muchbeer.total.HomeActivity_GeneratedInjector
-import raum.muchbeer.total.R
 import raum.muchbeer.total.databinding.FragmentFinalBinding
-import raum.muchbeer.total.model.grievance.papform.PapEntryListModel
 import raum.muchbeer.total.viewmodel.FinalViewModel
-import raum.muchbeer.total.viewmodel.SampleVM
 
 @AndroidEntryPoint
 class FinalFragment : Fragment() {
@@ -34,13 +34,22 @@ class FinalFragment : Fragment() {
 
         viewModel.viewInformation()
 
-        viewModel.checkOnDoneStatus.observe(viewLifecycleOwner, {
-            if (it == "Success") {
-                Toast.makeText(requireContext(), "Success Entered to the database", Toast.LENGTH_LONG).show()
-                val homeIntent = Intent(requireActivity(), HomeActivity::class.java)
-                startActivity(homeIntent)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.checkOnDoneStatus.collect {
+                    if (it == "Success") {
+                        Toast.makeText(
+                            requireContext(),
+                            "Success Entered to the database",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        val homeIntent = Intent(requireActivity(), HomeActivity::class.java)
+                        startActivity(homeIntent)
+                    }
+                }
             }
-        })
+        }
+
 return binding.root
 
     }

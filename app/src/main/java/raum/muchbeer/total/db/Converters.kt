@@ -1,12 +1,12 @@
 package raum.muchbeer.total.db
 
+import BpapDetailModel
+import CgrievanceModel
+import DattachmentModel
 import androidx.room.TypeConverter
+import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
-import raum.muchbeer.total.model.grievance.BpapDetailModel
-import raum.muchbeer.total.model.grievance.CgrievanceModel
-import raum.muchbeer.total.model.grievance.DattachmentModel
 import raum.muchbeer.total.model.hse.Hsedata
 import raum.muchbeer.total.model.vehicle.VehiclesData
 import java.lang.reflect.Type
@@ -22,9 +22,6 @@ class Converters {
     @TypeConverter
     fun papDetailModelToJson(listOfpapIdentity: List<BpapDetailModel>): String {
         val gson = Gson()
-        val gsonPretty = GsonBuilder().setPrettyPrinting()
-            .excludeFieldsWithoutExposeAnnotation()
-            .create()
 
         if (listOfpapIdentity.isNullOrEmpty()) return ""
 
@@ -36,7 +33,7 @@ class Converters {
     fun papDetailModelToPapModel(jsonPapDetail: String): List<BpapDetailModel> {
         if (jsonPapDetail.isNullOrEmpty()) return emptyList()
 
-        val type: Type = object : TypeToken<List<BpapDetailModel?>?>() {}.type
+
         val paplistEntries: List<BpapDetailModel> =
             Gson().fromJson<List<BpapDetailModel>>(jsonPapDetail)
         return paplistEntries
@@ -55,11 +52,9 @@ class Converters {
 
     @TypeConverter
     fun papGrievanceDataToGModel(jsonGrievanceDetail: String): List<CgrievanceModel> {
-        val gson = Gson()
-
         if (jsonGrievanceDetail.isNullOrEmpty()) return emptyList()
 
-        val type: Type = object : TypeToken<List<CgrievanceModel?>?>() {}.type
+
         val paplistEntries: List<CgrievanceModel> =
             Gson().fromJson<List<CgrievanceModel>>(jsonGrievanceDetail)
 
@@ -74,17 +69,15 @@ class Converters {
         return hseJson
     }
 
- @TypeConverter
+    @TypeConverter
     fun hsedatafromJsonToModel(hseJson : String) : List<Hsedata>{
-     val gson = Gson()
 
-     if (hseJson.isNullOrEmpty()) return emptyList()
+        if (hseJson.isNullOrEmpty()) return emptyList()
 
-     val type: Type = object : TypeToken<List<Hsedata?>?>() {}.type
-     val listHse: List<Hsedata> =
-         Gson().fromJson<List<Hsedata>>(hseJson)
+        val listHse: List<Hsedata> =
+            Gson().fromJson<List<Hsedata>>(hseJson)
 
-     return listHse
+        return listHse
     }
 
 
@@ -101,12 +94,9 @@ class Converters {
 
     @TypeConverter
     fun papDAttachmentToGModel(jsonAttachment: String): List<DattachmentModel> {
-        val gson = Gson()
+         if (jsonAttachment.isNullOrEmpty()) return emptyList()
 
-        if (jsonAttachment.isNullOrEmpty()) return emptyList()
-
-        val type: Type = object : TypeToken<List<CgrievanceModel?>?>() {}.type
-        val listAttached: List<DattachmentModel> =
+         val listAttached: List<DattachmentModel> =
             Gson().fromJson<List<DattachmentModel>>(jsonAttachment)
 
         return listAttached
@@ -126,12 +116,9 @@ class Converters {
 
     @TypeConverter
     fun vehicleDataJsonToModel(jsonVehicleDetail: String): List<VehiclesData> {
-        val gson = Gson()
-
         if (jsonVehicleDetail.isNullOrEmpty()) return emptyList()
 
-        val type: Type = object : TypeToken<List<VehiclesData?>?>() {}.type
-        val vehiclelistEntries: List<VehiclesData> =
+         val vehiclelistEntries: List<VehiclesData> =
             Gson().fromJson<List<VehiclesData>>(jsonVehicleDetail)
 
         return vehiclelistEntries

@@ -10,12 +10,12 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import raum.muchbeer.total.R
 import raum.muchbeer.total.databinding.FragmentFormBinding
-import raum.muchbeer.total.viewmodel.SampleVM
+import raum.muchbeer.total.viewmodel.GrievanceViewModel
 
 @AndroidEntryPoint
 class SelectionFormFragment : Fragment() {
 
-    private val selectionViewModel : SampleVM by viewModels()
+    private val selectionViewModel : GrievanceViewModel by viewModels()
     private lateinit var binding : FragmentFormBinding
 
     override fun onCreateView(
@@ -62,6 +62,11 @@ class SelectionFormFragment : Fragment() {
             if(isNull.isNullOrEmpty()) binding.next.isEnabled = false  else
                 binding.next.isEnabled = true
         })
+    }
+
+    private fun addPhoto() {
+        AddPhotoFragment().show(
+            childFragmentManager, AddPhotoFragment.TAG)
     }
 
 }

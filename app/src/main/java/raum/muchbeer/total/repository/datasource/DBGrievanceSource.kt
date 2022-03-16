@@ -1,67 +1,69 @@
 package raum.muchbeer.total.repository.datasource
 
-import android.media.Image
+import BpapDetailModel
+import CgrievanceModel
+import DattachmentModel
 import androidx.lifecycle.LiveData
-import raum.muchbeer.total.model.ImageFirestore
+import kotlinx.coroutines.flow.Flow
 import raum.muchbeer.total.model.engagement.EngageModel
 import raum.muchbeer.total.model.grievance.AgrienceModel
-import raum.muchbeer.total.model.grievance.BpapDetailModel
-import raum.muchbeer.total.model.grievance.CgrievanceModel
-import raum.muchbeer.total.model.grievance.DattachmentModel
-import raum.muchbeer.total.model.grievance.papform.PapEntryListModel
 import raum.muchbeer.total.model.hse.HseModel
 import raum.muchbeer.total.model.hse.Hsedata
 import raum.muchbeer.total.model.vehicle.VehicleModel
 import raum.muchbeer.total.model.vehicle.VehiclesData
 import raum.muchbeer.total.model.vehicle.request.Vehicle
-import java.util.concurrent.Flow
+
 
 interface DBGrievanceSource {
 
-    fun retrieveGrievanceListLive() : LiveData<List<AgrienceModel>>
+    suspend fun insertASingleGriev(data : AgrienceModel) : Long
 
-    suspend fun insertSingleGriev(data : AgrienceModel) : Long
+    suspend fun inserAtListGriev(data: List<AgrienceModel>)
 
-    suspend fun insertListGriev(data: List<AgrienceModel>)
+    fun retrievAgrieveList() : Flow<List<AgrienceModel>>
 
-    suspend fun retrieveAgrieveList() : List<AgrienceModel>
-
-    suspend fun getSearchedGrievByNamme(fullName: String) : AgrienceModel
+   fun retrievAGrievenceWithPrimary(primaryKey : String) : Flow<List<AgrienceModel>>
 
 
     //******BGrieveID***********8888
-    fun retrieveBGrievDetailD() : LiveData<List<BpapDetailModel>>
+    fun retrievBGrievDetailD() : Flow<List<BpapDetailModel>>
 
-    suspend fun insertSingleBGrievDetailD(data : BpapDetailModel) : Long
+    suspend fun insertBSingleGrievDetailD(data : BpapDetailModel) : Long
 
-    suspend fun insertListBGrievDetailD(data : List<BpapDetailModel>)
+    suspend fun insertBListGrievDetailD(data : List<BpapDetailModel>)
+
+    fun retrievBpapDetailDFromPrimaryKey(primaryKey: String) : Flow<List<BpapDetailModel>>
+
+    fun retrievBPapsEnteredWithUserName(username : String) : Flow<List<BpapDetailModel>>
+
 
     //******CGrieveEntry***********
-    fun retrieveCGrievEntries() : LiveData<List<CgrievanceModel>>
 
-    suspend fun insertSingleCGrievEntries(data : CgrievanceModel) : Long
+    suspend fun insertCSingleGrievEntries(data : CgrievanceModel) : Long
 
-    suspend fun insertListCGrievanceEntries(data : List<CgrievanceModel>)
+    suspend fun insertcListGrievanceEntries(data : List<CgrievanceModel>)
 
-    suspend fun retrieveSingleGriev(reg_date : String) : CgrievanceModel
+     fun retrievCGrievEntries() : Flow<List<CgrievanceModel>>
 
-    suspend fun retrieveListOfGrievance() : List<CgrievanceModel>
+     fun searchCGrieveByName(fullName: String) : Flow<List<CgrievanceModel>>
+
+    suspend fun deleteCGrievance()
 
 
-    suspend fun deleteGTable()
 
     //******Dattachment***********8888
-    fun retrieveDAttachment() : LiveData<List<DattachmentModel>>
 
-    suspend fun insertSingleDAttachment(data : DattachmentModel) : Long
+    suspend fun insertDSingleAttachment(data : DattachmentModel) : Long
 
-    suspend fun insertListCAttachment(data : List<DattachmentModel>)
+    fun retrievDListOfAttachment() : Flow<List<DattachmentModel>>
 
-    suspend fun retrieveSingleAttach(unique_data : String) : DattachmentModel
+    fun retrievDListOfAttachmentBySelect(checkStatus : Boolean) : Flow<List<DattachmentModel>>
 
-    suspend fun retrieveListOfAttachment() : List<DattachmentModel>
+    fun retrievDListOfAttachmentByValuationNo(valuation_no : String) : Flow<List<DattachmentModel>>
 
-    suspend fun deleteDTable()
+    suspend fun updateDAttachment(attachment: DattachmentModel)
+
+    suspend fun updateDImageAttachment(imageUrl: String, fileName: String)
 
     //********************HSE DATA **************
     suspend fun insertIntoHSE(data : Hsedata) : Long
@@ -102,20 +104,13 @@ interface DBGrievanceSource {
 
     suspend fun insertSingleVehicleData(data: Vehicle) : Long
     //********************REQUESTED VEHICLE
-  //  suspend fun insertIntoVehicle(data : VehiclesData) : Long
 
-    fun retrieveLiveVehicleRequested() : kotlinx.coroutines.flow.Flow<List<Vehicle>>
+    fun retrieveLiveVehicleRequested() : Flow<List<Vehicle>>
 
     suspend fun insertIntoListVehicleRequested(data: List<Vehicle>)
 
     suspend fun deleteAllPrevRequestVehicle()
 
-    //Images
-    suspend fun insertImages(data : ImageFirestore) : Long
-
-    suspend fun retrieveListofImages() : List<ImageFirestore>
-
-    suspend fun updateImages(imageUrl: String, fileName:String)
 
 
 

@@ -21,14 +21,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import raum.muchbeer.total.R
 import raum.muchbeer.total.databinding.FragmentPhotoBinding
-import raum.muchbeer.total.viewmodel.SampleVM
+import raum.muchbeer.total.viewmodel.GrievanceViewModel
 import java.io.File
 
 @AndroidEntryPoint
 class PhotoFragment : Fragment() {
 
     private lateinit var binding : FragmentPhotoBinding
-    private val viewModel : SampleVM by viewModels()
+    private val viewModel : GrievanceViewModel by viewModels()
     private lateinit var photoFile: File
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,7 +71,6 @@ return binding.root
         }
     }
     private fun getPhotoFile(fileName: String): File {
-        // Use `getExternalFilesDir` on Context to access package-specific directories.
 
         val storageDirectory = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(fileName, ".jpg", storageDirectory)
@@ -79,16 +78,7 @@ return binding.root
 
     var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            // There are no request codes
-            val data: Intent? = result.data
-        //    val takenImage = data?.extras?.get("data") as Bitmap
             val takenImageInBitMap = BitmapFactory.decodeFile(photoFile.absolutePath)
-            Log.d("PhotoFragment", "The value collected is: ${takenImageInBitMap}")
-            Log.d("PhotoFragment", "The file value is : ${photoFile.absolutePath}")
-            viewModel.convertFileImageToBase64(photoFile.absoluteFile)
-            viewModel.convertFileImagefromJavaConvert(photoFile.absoluteFile)
-
-        //    viewModel.convertToBase64(takenImageInBitMap)
             binding.imageView.setImageBitmap(takenImageInBitMap)
         }
     }

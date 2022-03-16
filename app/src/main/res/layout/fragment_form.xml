@@ -7,7 +7,7 @@
         <import type="android.widget.CompoundButton" />
         <variable
             name="viewModel"
-            type="raum.muchbeer.total.viewmodel.SampleVM" />
+            type="raum.muchbeer.total.viewmodel.GrievanceViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

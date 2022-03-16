@@ -11,6 +11,10 @@ class DBPapListImpl(val papListDao: PapListDao) : DBPapUserSource {
         return papListDao.retrievePapUsers()
     }
 
+    override fun searchPapListSearch(searchName: String): Flow<List<PapEntryListModel>> {
+        return papListDao.searchPaps(searchName)
+    }
+
     override suspend fun insertSinglePap(data: PapEntryListModel): Long {
         return papListDao.insertSinglePap(data)
     }
@@ -18,10 +22,6 @@ class DBPapListImpl(val papListDao: PapListDao) : DBPapUserSource {
 
     override suspend fun insertListPap(data: List<PapEntryListModel>) {
         return papListDao.insertPapList(data)
-    }
-
-    override fun searchPaps(fullName: String): LiveData<List<PapEntryListModel>> {
-      return papListDao.getSearchResults(fullName)
     }
 
     override suspend fun deletepaps() {

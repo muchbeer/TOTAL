@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="raum.muchbeer.total.viewmodel.SampleVM" />
+            type="raum.muchbeer.total.viewmodel.GrievanceViewModel" />
     </data>
 
     <ScrollView

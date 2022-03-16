@@ -1,5 +1,8 @@
 package raum.muchbeer.total.repository.impl
 
+import BpapDetailModel
+import CgrievanceModel
+import DattachmentModel
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.flow.Flow
 import raum.muchbeer.total.db.engagedao.EngagementDao
@@ -9,12 +12,8 @@ import raum.muchbeer.total.db.grievancedao.CgrievanceDao
 import raum.muchbeer.total.db.grievancedao.DattachDao
 import raum.muchbeer.total.db.hsedao.HseDao
 import raum.muchbeer.total.db.vehicledao.VehicleDao
-import raum.muchbeer.total.model.ImageFirestore
 import raum.muchbeer.total.model.engagement.EngageModel
 import raum.muchbeer.total.model.grievance.AgrienceModel
-import raum.muchbeer.total.model.grievance.BpapDetailModel
-import raum.muchbeer.total.model.grievance.CgrievanceModel
-import raum.muchbeer.total.model.grievance.DattachmentModel
 import raum.muchbeer.total.model.hse.HseModel
 import raum.muchbeer.total.model.hse.Hsedata
 import raum.muchbeer.total.model.vehicle.VehicleModel
@@ -22,75 +21,77 @@ import raum.muchbeer.total.model.vehicle.VehiclesData
 import raum.muchbeer.total.model.vehicle.request.Vehicle
 import raum.muchbeer.total.repository.datasource.DBGrievanceSource
 
-class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : BpapDetailDao,
+class DBGrievanceImpl(val aGrievDao : AgrievanceGeneralDao, val bGrievIDao : BpapDetailDao,
                       val cGrievEntrDao: CgrievanceDao, val dAttachDao : DattachDao, val hseDao: HseDao,
                       val engageDao : EngagementDao, val vehiclesDao: VehicleDao
 ) : DBGrievanceSource {
 
 
-    override fun retrieveGrievanceListLive(): LiveData<List<AgrienceModel>> {
-    return  grievDao.retrieveGrievanceGeneral()    }
+  //****************************AGrievance****************************************
+    override suspend fun insertASingleGriev(data: AgrienceModel): Long {
+    return aGrievDao.insertSingleGrievanceGen(data)   }
 
-    override suspend fun insertSingleGriev(data: AgrienceModel): Long {
-    return grievDao.insertSingleGrievanceGen(data)   }
+    override suspend fun inserAtListGriev(data: List<AgrienceModel>) {
+    aGrievDao.insertGrievanceList(data)    }
 
-    override suspend fun insertListGriev(data: List<AgrienceModel>) {
-    grievDao.insertGrievanceList(data)    }
+    override fun retrievAgrieveList(): Flow<List<AgrienceModel>> {
+      return  aGrievDao.retrieveAGrievanceGeneral()   }
 
-    override suspend fun retrieveAgrieveList(): List<AgrienceModel> {
-     return grievDao.retrieveListGrievance()    }
+    override fun retrievAGrievenceWithPrimary(primaryKey: String): Flow<List<AgrienceModel>> {
+       return aGrievDao.retrieveAGrievenceWithPrimaryKey(primaryKey = primaryKey)     }
 
-    override suspend fun getSearchedGrievByNamme(fullName: String): AgrienceModel {
-        return grievDao.getSearchedGrievByName(fullName)
-    }
 
-    override fun retrieveBGrievDetailD(): LiveData<List<BpapDetailModel>> {
-    return bGrievIDao.retrieveBpapDetailD()    }
 
-    override suspend fun insertSingleBGrievDetailD(data: BpapDetailModel): Long {
+    //******************BGrievance******************************
+    override fun retrievBGrievDetailD(): Flow<List<BpapDetailModel>> {
+      return bGrievIDao.retrieveBpapDetailD()     }
+
+    override suspend fun insertBSingleGrievDetailD(data: BpapDetailModel): Long {
      return bGrievIDao.insertSinglePapDetailD(data)    }
 
-    override suspend fun insertListBGrievDetailD(data: List<BpapDetailModel>) {
+    override suspend fun insertBListGrievDetailD(data: List<BpapDetailModel>) {
       bGrievIDao.insertBpapDetailIDList(data)    }
 
-    override fun retrieveCGrievEntries(): LiveData<List<CgrievanceModel>> {
-    return cGrievEntrDao.retrieveGrievancee()    }
+    override fun retrievBpapDetailDFromPrimaryKey(primaryKey: String): Flow<List<BpapDetailModel>> {
+      return  bGrievIDao.retrieveBpapDetailDFromPrimaryKey(primaryKey = primaryKey)   }
 
-    override suspend fun insertSingleCGrievEntries(data: CgrievanceModel): Long {
+    override fun retrievBPapsEnteredWithUserName(username: String): Flow<List<BpapDetailModel>> {
+       return bGrievIDao.retrievePapsEnteredWithUserName(username)
+    }
+
+    //**************************************CGrievance********************************
+    override suspend fun insertCSingleGrievEntries(data: CgrievanceModel): Long {
     return cGrievEntrDao.insertSingleGrievancee(data)   }
 
-    override suspend fun insertListCGrievanceEntries(data: List<CgrievanceModel>) {
+    override suspend fun insertcListGrievanceEntries(data: List<CgrievanceModel>) {
      cGrievEntrDao.insertGrievanceees(data)    }
 
-    override suspend fun retrieveSingleGriev(reg_date: String): CgrievanceModel {
-    return cGrievEntrDao.retrieveSingleGrieve(reg_date)    }
+    override fun retrievCGrievEntries(): Flow<List<CgrievanceModel>> {
+       return cGrievEntrDao.retrieveAGrievance()    }
 
-    override suspend fun retrieveListOfGrievance(): List<CgrievanceModel> {
-     return   cGrievEntrDao.retrieveListOfGrievance()
+    override fun searchCGrieveByName(fullName: String): Flow<List<CgrievanceModel>> {
+        return cGrievEntrDao.searchAListOfGrieveWithValuationNo(full_name = fullName)     }
+
+    override suspend fun deleteCGrievance() {
+      cGrievEntrDao.clear()    }
+
+
+    //******************DAttachment**********************************
+    override suspend fun insertDSingleAttachment(data: DattachmentModel): Long {
+    return dAttachDao.insertDSingleAttachment(data)   }
+
+    override fun retrievDListOfAttachment(): Flow<List<DattachmentModel>> {
+       return dAttachDao.retrievDAttachment()     }
+
+    override fun retrievDListOfAttachmentBySelect(checkStatus: Boolean): Flow<List<DattachmentModel>> {
+       return dAttachDao.retrievDListOfAttachmentBySelect(checkStatus = checkStatus)     }
+
+    override fun retrievDListOfAttachmentByValuationNo(valuation_no: String): Flow<List<DattachmentModel>> {
+        return dAttachDao.retrievDListOfAttachmentByValuationNo(valuation_no)   }
+
+    override suspend fun updateDAttachment(attachment: DattachmentModel) {
+        dAttachDao.updateDAttachment(attachment = attachment)
     }
-
-    override suspend fun deleteGTable() {
-    cGrievEntrDao.clear()
-    }
-
-    override fun retrieveDAttachment(): LiveData<List<DattachmentModel>> {
-     return dAttachDao.retrieveAttachment()   }
-
-    override suspend fun insertSingleDAttachment(data: DattachmentModel): Long {
-    return dAttachDao.insertSingleAttachment(data)   }
-
-    override suspend fun insertListCAttachment(data: List<DattachmentModel>) {
-    return dAttachDao.insertAttachmentList(data)    }
-
-    override suspend fun retrieveSingleAttach(unique_data : String): DattachmentModel {
-     return dAttachDao.retrieveSingleAttachment(unique_data)   }
-
-    override suspend fun retrieveListOfAttachment(): List<DattachmentModel> {
-       return dAttachDao.retrieveListOfAttachment()
-    }
-
-    override suspend fun deleteDTable() {
-        return dAttachDao.clear()    }
 
 
     //HSE DAO
@@ -173,16 +174,7 @@ class DBGrievanceImpl(val grievDao : AgrievanceGeneralDao, val bGrievIDao : Bpap
         vehiclesDao.deleteAllVehicles()
     }
 
-    override suspend fun insertImages(data: ImageFirestore) : Long {
-      return   dAttachDao.insertImages(data)
-    }
-
-    override suspend fun retrieveListofImages(): List<ImageFirestore> {
-        return dAttachDao.retrieveListOfImages()
-    }
-
-
-    override suspend fun updateImages(imageUrl: String, fileName : String) {
-        dAttachDao.updateImages(imageUrl, fileName)
+    override suspend fun updateDImageAttachment(imageUrl: String, fileName : String) {
+        dAttachDao.updateDImageAttachment(imageUrl, fileName)
     }
 }

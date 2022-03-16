@@ -1,9 +1,9 @@
 package raum.muchbeer.total.model.grievance
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import BpapDetailModel
+import androidx.room.*
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 import raum.muchbeer.total.db.Converters
 
 
@@ -17,8 +17,8 @@ data class AgrienceModel(
     val field_id: String,
     @SerializedName("user_name")
     val user_name: String,
-    @TypeConverters(Converters::class)
     @SerializedName("papdetails")
     val papdetails: List<BpapDetailModel>
 
 )
+

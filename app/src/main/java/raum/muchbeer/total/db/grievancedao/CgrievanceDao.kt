@@ -1,11 +1,9 @@
 package raum.muchbeer.total.db.grievancedao
 
+import CgrievanceModel
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import raum.muchbeer.total.model.grievance.CgrievanceModel
+import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CgrievanceDao {
@@ -15,15 +13,15 @@ interface CgrievanceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSingleGrievancee(data: CgrievanceModel) : Long
 
-    @Query("SELECT * FROM c_grievance_enter_values")
-    fun retrieveGrievancee() : LiveData<List<CgrievanceModel>>
+    @Query("SELECT * FROM c_grievance")
+    fun retrieveAGrievance() : Flow<List<CgrievanceModel>>
 
-    @Query("SELECT * FROM c_grievance_enter_values WHERE reg_date LIKE :griev_date")
-    suspend fun retrieveSingleGrieve(griev_date : String) : CgrievanceModel
+    @Query("SELECT * FROM c_grievance WHERE full_name =:full_name")
+    fun searchAListOfGrieveWithValuationNo(full_name : String) : Flow<List<CgrievanceModel>>
 
-    @Query("SELECT * FROM c_grievance_enter_values ")
-    suspend fun retrieveListOfGrievance() : List<CgrievanceModel>
+    @Update
+    suspend fun updateCgrievancewithAttach(griev : CgrievanceModel)
 
-    @Query("DELETE FROM c_grievance_enter_values")
+    @Query("DELETE FROM c_grievance")
     suspend fun clear()
 }

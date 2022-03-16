@@ -1,10 +1,7 @@
 package raum.muchbeer.total.db.grievancedao
 
-import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import raum.muchbeer.total.model.grievance.AgrienceModel
 
 @Dao
@@ -17,12 +14,8 @@ interface AgrievanceGeneralDao {
     suspend fun insertSingleGrievanceGen(data: AgrienceModel) : Long
 
     @Query("SELECT * FROM a_grievance_form1")
-    fun retrieveGrievanceGeneral() : LiveData<List<AgrienceModel>>
+    fun retrieveAGrievanceGeneral() : Flow<List<AgrienceModel>>
 
-    @Query("SELECT * FROM a_grievance_form1")
-   suspend fun retrieveListGrievance() : List<AgrienceModel>
-
- //   @Query("SELECT * FROM user WHERE first_name LIKE :search "
-    @Query("SELECT * FROM a_grievance_form1 WHERE  user_name LIKE :fullName")
-    suspend fun getSearchedGrievByName(fullName : String) : AgrienceModel
+    @Query("SELECT * FROM a_grievance_form1 WHERE  primary_key LIKE :primaryKey")
+     fun retrieveAGrievenceWithPrimaryKey(primaryKey : String) : Flow<List<AgrienceModel>>
 }

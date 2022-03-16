@@ -1,5 +1,7 @@
 package raum.muchbeer.total.repository
 
+import CgrievanceModel
+import DattachmentModel
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -20,11 +22,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import raum.muchbeer.total.BuildConfig
 import raum.muchbeer.total.api.DataService
 import raum.muchbeer.total.model.DataState
-import raum.muchbeer.total.model.ImageFirestore
 import raum.muchbeer.total.model.engagement.EngageModel
 import raum.muchbeer.total.model.grievance.AgrienceModel
-import raum.muchbeer.total.model.grievance.CgrievanceModel
-import raum.muchbeer.total.model.grievance.DattachmentModel
 import raum.muchbeer.total.model.grievance.papform.PapEntity
 import raum.muchbeer.total.model.grievance.papform.PapEntryListModel
 import raum.muchbeer.total.model.grievance.papform.PapEntryModel
@@ -40,9 +39,14 @@ import raum.muchbeer.total.model.vehicle.request.RequestVehicleModel
 import raum.muchbeer.total.model.vehicle.request.Vehicle
 import raum.muchbeer.total.repository.datasource.DBGrievanceSource
 import raum.muchbeer.total.repository.datasource.DBPapUserSource
-import java.io.FileInputStream
+import raum.muchbeer.total.utils.Constant
+import raum.muchbeer.total.utils.Constant.Companion.DEFAULT_FIELD_ID
+import raum.muchbeer.total.utils.Constant.Companion.FIELD_ID_API
+import raum.muchbeer.total.utils.Constant.Companion.POSITION_API
+import raum.muchbeer.total.utils.Constant.Companion.PREFERENCE_NAME
+import raum.muchbeer.total.utils.Constant.Companion.STATUS_API
+import raum.muchbeer.total.utils.Constant.Companion.USER_NAME_API
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -76,91 +80,32 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         _checkForDataEntry.postValue(false)
     }
 
-    val sharedPreference = context.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
+    val sharedPreference = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
     var editor = sharedPreference.edit()
 
-    private var storageReferenence = FirebaseStorage.getInstance().getReference()
-
-    suspend fun insertingImages(data: ImageFirestore): Long {
-        return dbGgriev.insertImages(data)
-    }
 
     suspend fun retrieveGrievancAndSaveToFirestore(agriev: AgrienceModel)  = supervisorScope{
 
         launch {
             if (_checkForDataEntry.value == true) {
-                Log.d("Repository", "No more data entered")
+                Log.d(TAG, "No more data entered")
                 return@launch
             } else {
                 db.collection("grievance").add(agriev)
                     .addOnSuccessListener { documentReference ->
                         _checkForDataEntry.value  = true
-                        Log.d("Repository", "Saved data to firestore successfull")
+                        Log.d(TAG, "Saved data to firestore successfull")
                     }.addOnFailureListener {
-                        Log.d("Repository", "Failure with error: ${it.toString()}")
+                        Log.d(TAG, "Failure with error: ${it.toString()}")
                     }
             }
         }
 
     }
 
-    suspend fun uploadingPicture() = supervisorScope {
-
-        val sdf = SimpleDateFormat("dd:hh:mm:ss")
-        val currentDate = sdf.format(Date())
-        val imageRef = storageReferenence.child("images/" + currentDate)
-        dbGgriev.retrieveListofImages().forEach { image ->
-            Log.d("PhotoFragment: ", "Repository get Image empty url: ${image.imageUrl} ")
-            Log.d("PhotoFragment: ", "Repository entered file Name: ${image.fileName} ")
-
-            if (image != null && image.imageUrl == "gadiel") {
-                Log.d("PhotoFragment: ", "Repository entered list of images")
-                //  val uploadTask = imageRef.putFile(photosUri)
-                val inputstream = FileInputStream(image.fileName)
-                val uploadTask = imageRef.putStream(inputstream)
-                uploadTask.addOnSuccessListener {
-                    val downloadUrl = imageRef.downloadUrl
-                    downloadUrl.addOnSuccessListener {
-                        Log.d("FragmentPhoto", "Image link sent is:   ${it.toString()}")
-                        db.collection("images")
-                            .add(
-                                ImageFirestore(
-                                    "${image.fileName}",
-                                    "${it.toString()}", "${currentDate}"
-                                )
-                            ).addOnSuccessListener { documentReference ->
-                                //Update the image
-                                launch {
-                                    dbGgriev.updateImages("${it.toString()}", "${image.fileName}")
-                                    Log.d(
-                                        "FragmentPhoto",
-                                        "In the repository the value is updated succesful"
-                                    )
-                                }
-
-                                Log.d(
-                                    "FragmentPhoto",
-                                    "DocumentSnapshot written with ID: ${documentReference.id}"
-                                )
-                            }
-                            .addOnFailureListener { e ->
-                                Log.w("FragmentPhoto", "Error adding document", e)
-                            }
-                    }
-                    uploadTask.addOnFailureListener {
-                        Log.e("FragmentPhoto", it.message!!)
-                    }
-
-                }
-            }
-        }
-
-    }
-
-    val hseDataLive = dbGgriev.retrieveLiveHSE()
 
     fun sampleWorkerPass() {
-        Log.d("Repository", "This is to confirm that the worker is working at higher level ")
+        Log.d(TAG, "This is to confirm that the worker is working at higher level ")
     }
 
     //***************HSE****************8
@@ -179,7 +124,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
 
     suspend fun insertEngagementToServer(engagement: EngageModel) {
         val jsonDBListPretty: String = gsonPretty.toJson(engagement)
-        Log.d("Repository", "Ping json engagment to give you ${jsonDBListPretty}")
+        Log.d(TAG, "Ping json engagment to give you ${jsonDBListPretty}")
         val requestBody = jsonDBListPretty.toRequestBody("application/json".toMediaTypeOrNull())
 
         try {
@@ -193,25 +138,20 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                 val prettyJson = gson2.toJson(
                     JsonParser.parseString(response.body()?.string())
                 )
-                Log.d("Repository", "Retrieve response from engage Server ${prettyJson}")
+                Log.d(TAG, "Retrieve response from engage Server ${prettyJson}")
             }
         } catch (e: Exception) {
-            Log.d("Repository", "Network after clicked engagementData error is ${e.message}")
+            Log.d(TAG, "Network after clicked engagementData error is ${e.message}")
         }
     }
 
-    //*********************Grievance*********************
-    suspend fun retrieveListOfGrievance(): List<CgrievanceModel> {
-        return dbGgriev.retrieveListOfGrievance()
-    }
-
-    val cgrievanceLiveData = dbGgriev.retrieveCGrievEntries()
+    //*********************AGrievance*********************
 
     val retrieveEngageLive = dbGgriev.retrieveLiveEngagement()
-
+//Send to server but changes need to be made in agrieve before done
     suspend fun insertGrievanceToserver(agriev: AgrienceModel) {
         val jsonDBAgriev: String = gsonPretty.toJson(agriev)
-        Log.d("Repository", "Ping json all grievence to give you ${jsonDBAgriev}")
+        Log.d(TAG, "Ping json all grievence to give you ${jsonDBAgriev}")
 
         val requestBody = jsonDBAgriev.toRequestBody("application/json".toMediaTypeOrNull())
 
@@ -226,34 +166,36 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                 val prettyJson = gson2.toJson(
                     JsonParser.parseString(response.body()?.string())
                 )
-                Log.d("Repository", "Retrieve response from Grievance Server ${prettyJson}")
+                Log.d(TAG, "Retrieve response from Grievance Server ${prettyJson}")
             }
         } catch (e: Exception) {
-            Log.d("Repository", "Network after clicked grievanceForm error is ${e.message}")
+            Log.d(TAG, "Network after clicked grievanceForm error is ${e.message}")
         }
     }
 
+    //Done but check in the implementation
     suspend fun insertToCgrienvance(grievanceModel: CgrievanceModel): Long {
-        return dbGgriev.insertSingleCGrievEntries(grievanceModel)
+        return dbGgriev.insertCSingleGrievEntries(grievanceModel)
     }
 
-    suspend fun retrieveCgrievance(reg_date: String): CgrievanceModel {
-        return dbGgriev.retrieveSingleGriev(reg_date)
+    //Done but check on the implementation of the code
+     fun retrieveAGrieveGeralList(): Flow<List<AgrienceModel>> {
+        return dbGgriev.retrievAgrieveList()
     }
 
-    suspend fun retrieveAGrieveGeralList(): List<AgrienceModel> {
-        return dbGgriev.retrieveAgrieveList()
-    }
-
+    //Done but check on the implementation of the code
     suspend fun insertToAGriev(data: AgrienceModel): Long {
-        return dbGgriev.insertSingleGriev(data)
+        return dbGgriev.insertASingleGriev(data)
     }
 
+    fun searchPaps(paps : String) : Flow<List<PapEntryListModel>>{
+        return dbSource.searchPapListSearch(paps)
+    }
 
     //********************Attachment**********************
-
-    suspend fun retrieveAttachment(unique_data : String) : DattachmentModel {
-        return dbGgriev.retrieveSingleAttach(unique_data)}
+    suspend fun insertToDAttachment(attachment: DattachmentModel): Long {
+        return dbGgriev.insertDSingleAttachment(attachment)
+    }
 
     //*******************Vehicle**************************
     suspend fun insertVehicle(data: VehiclesData): Long {
@@ -266,7 +208,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
 
     suspend fun insertVehicleModelToServer(vehicleModel: VehicleModel) {
         val jsonDBListPretty: String = gsonPretty.toJson(vehicleModel)
-        Log.d("Repository", "Ping json vehicles data to give you ${jsonDBListPretty}")
+        Log.d(TAG, "Ping json vehicles data to give you ${jsonDBListPretty}")
         val requestBody = jsonDBListPretty.toRequestBody("application/json".toMediaTypeOrNull())
 
         try {
@@ -277,16 +219,16 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                 val prettyJson = gson2.toJson(
                     JsonParser.parseString(response.body()?.string())
                 )
-                Log.d("Repository", "Retrieve response from Vehicles field Server ${prettyJson}")
+                Log.d(TAG, "Retrieve response from Vehicles field Server ${prettyJson}")
             }
         } catch (e: Exception) {
-            Log.d("Repository", "Network after clicked engagementData error is ${e.message}")
+            Log.d(TAG, "Network after clicked engagementData error is ${e.message}")
         }
     }
 
     suspend fun insertVehicleFieldData(vehiclesData: VehiclesData) {
         val jsonDBListPretty: String = gsonPretty.toJson(vehiclesData)
-        Log.d("Repository", "Ping json vehicles data to give you ${jsonDBListPretty}")
+        Log.d(TAG, "Ping json vehicles data to give you ${jsonDBListPretty}")
         val requestBody = jsonDBListPretty.toRequestBody("application/json".toMediaTypeOrNull())
 
         try {
@@ -297,10 +239,10 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                 val prettyJson = gson2.toJson(
                     JsonParser.parseString(response.body()?.string())
                 )
-                Log.d("Repository", "Retrieve response from Vehicles field Server ${prettyJson}")
+                Log.d(TAG, "Retrieve response from Vehicles field Server ${prettyJson}")
             }
         } catch (e: Exception) {
-            Log.d("Repository", "Network after clicked engagementData error is ${e.message}")
+            Log.d(TAG, "Network after clicked engagementData error is ${e.message}")
         }
     }
 
@@ -315,17 +257,17 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
         return dbGgriev.retrieveFromSingleVehicleDataOG(reg_date)
     }
 
-    suspend fun requestVehicle(): Flow<VehicleState<List<Vehicle>>> = flow {
-        val fieldId = sharedPreference.getString("field_id", "2016")
+     fun requestVehicle(): Flow<VehicleState<List<Vehicle>>> = flow {
+        val fieldId = sharedPreference.getString(FIELD_ID_API, DEFAULT_FIELD_ID)
         emit(VehicleState.Loading)
 
         val receiveVehicle = ReceiveVehicle(
-            "${BuildConfig.API_KEY_GRIEVANCE}",
-            "${fieldId}"
+            api_key = BuildConfig.API_KEY_GRIEVANCE,
+            field_id = "$fieldId"
         )
 
         val jsonDBListPretty: String = gsonPretty.toJson(receiveVehicle)
-        Log.d("Repository", "Repository Vehicle json is : ${jsonDBListPretty}")
+        Log.d(TAG, "Repository Vehicle json is : ${jsonDBListPretty}")
 
         val requestBody = jsonDBListPretty.toRequestBody("application/json".toMediaTypeOrNull())
 
@@ -339,7 +281,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
 
                 if (vehiclesModel.status == "200") {
                     Log.d(
-                        "Repository",
+                        TAG,
                         "The Desc success return Description ID is ${vehiclesModel.statusDesc}"
                     )
 
@@ -376,7 +318,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
             emit(DataState.Loading)
 
             val jsonDBListPretty: String = gsonPretty.toJson(credentialEntity)
-            Log.d("GrievanceModel", "GrievenceModel is : ${jsonDBListPretty}")
+            Log.d(TAG, "GrievenceModel is : ${jsonDBListPretty}")
 
             val requestBody = jsonDBListPretty.toRequestBody("application/json".toMediaTypeOrNull())
 
@@ -401,17 +343,16 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
 
                     if (user.status == "200") {
                         Log.d("Repository", "value of name user: ${user.full_name}")
-                        Log.d("Repository", "The value after login of field ID is ${user.field_id}")
 
-                        editor.putString("field_id", "${user.field_id}")
-                        editor.putString("username", "${user.full_name}")
-                        editor.putString("status", "${user.status}")
-                        editor.putString("position", "${user.position}")
+                        editor.putString(FIELD_ID_API, user.field_id)
+                        editor.putString(USER_NAME_API, user.full_name)
+                        editor.putString(STATUS_API, user.status)
+                        editor.putString(POSITION_API, user.position)
                         editor.apply()
                         editor.commit()
                         val papListModel = PapEntity(
-                            BuildConfig.API_KEY,
-                            user.field_id
+                           api_key = BuildConfig.API_KEY,
+                           field_id = user.field_id
                         )
                         receivePapList(papListModel = papListModel)
                         emit(DataState.Success(user))
@@ -426,7 +367,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                 }
 
             } catch (e: Exception) {
-                Log.d("Repository", "error after login is clicked is ${e.message}")
+                Log.d(TAG, "error after login is clicked is ${e.message}")
                 emit(DataState.ErrorException(e))
             }
         }
@@ -436,7 +377,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
      //   emit(DataState.Loading)
 
         val jsonDBListPretty: String = gsonPretty.toJson(papListModel)
-        Log.d("Repository", "Pink the login credential by get field ID${jsonDBListPretty}")
+        Log.d(TAG, "Pink the login credential by get field ID${jsonDBListPretty}")
 
         // Create RequestBody ( We're not using any converter, like GsonConverter, MoshiConverter e.t.c, that's why we use RequestBody )
         val requestBody = jsonDBListPretty.toRequestBody("application/json".toMediaTypeOrNull())
@@ -449,70 +390,48 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                     PapListStateEvent.Error("Please check your network")
                     return
                 }
-                Log.d("Repository", "RetrieveData function clicked and paplist successful sent:")
+                Log.d(TAG, "RetrieveData function clicked and paplist successful sent:")
 
                 // Convert raw JSON to pretty JSON using GSON library
                 val gson2 = GsonBuilder().setPrettyPrinting()
-                    .excludeFieldsWithoutExposeAnnotation()
-                    .create()
+                                      .create()
                 val prettyJson = gson2.toJson(
                     JsonParser.parseString(response.body()?.string())
                 )
 
                     val papResult = gson2.fromJson(prettyJson, PapEntryModel::class.java)
                   listPaps.postValue(papResult.paplist)
-                Log.d("Repository", "Result Description after login : ${papResult.statusDesc}")
+                Log.d(TAG, "Result Description after login : ${papResult.statusDesc}")
             papResult.paplist.forEach { papEntry ->
              val checkRecord =   dbSource.insertSinglePap(papEntry)
 
 
                 if (checkRecord > -1) {
                     PapListStateEvent.Success(papEntry)
-                    Log.d("Repository", "Record inserted successfull")
+                    Log.d(TAG, "Record inserted successfull")
                 }
             }
-
-              /*  val user = gsonPretty.fromJson(prettyJson, PapEntryModel::class.java)
-                Log.d("Repository", "PapListItem Item is : ${user.statusDesc}")*/
-
-/*                val jsonObject = JSONObject(prettyJson)
-                val jsonArray = jsonObject.getJSONArray("paplist")
-                Log.d("Repository", "paplist are : ${jsonArray}")
-                val papEntity = mutableListOf<PapEntryListModel>()
-                for (i in 0 until jsonArray.length()) {
-                    val val_id = "${jsonArray.getJSONObject(i).getString("valuation_number")}"
-                    val papName = "${jsonArray.getJSONObject(i).getString("full_name")}"
-                    //   userDataPref.storeValuationId("${val_id}")
-
-
-                    val papEntry = PapEntryListModel(
-                        "${jsonArray.getJSONObject(i).getString("valuation_number")}",
-                        "${jsonArray.getJSONObject(i).getString("full_name")}",
-                        "${jsonArray.getJSONObject(i).getString("phone_number")}",
-                        "${jsonArray.getJSONObject(i).getString("district")}",
-                        "${jsonArray.getJSONObject(i).getString("region")}"
-                    )
-
-
-                    papEntity.add(papEntry)
-
-                //    emit(DataState.Success(listPaps))
-                    val checkRecord = dbSource.insertSinglePap(papEntry)
-                    if (checkRecord > -1) {
-                        PapListStateEvent.getListOfPap(papEntry)
-                        Log.d("Repository", "Record inserted successfull")
-                    }
-
-                }*/
-
-            }
+        }
 
         } catch (e: Exception) {
-            Log.d("Repository", "Network after clicked retrievedData error is ${e.message}")
+            Log.d(TAG, "Network after clicked retrievedData error is ${e.message}")
             PapListStateEvent.Error(e.toString())
            // emit(DataState.ErrorException(e))
         }
     }
+
+    fun getSearchPapListFlow(search : String) = networkBoundResource(
+        query =   {
+            dbSource.searchPapListSearch(searchName = search)
+        },
+        fetch = {
+            listPaps.value
+        },
+        saveFetchResult = {
+            dbSource.deletepaps()
+            dbSource.insertListPap(it!!)
+        }
+    )
 
     fun getPapListFlow() = networkBoundResource(
             query =   {
@@ -531,7 +450,7 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
 
     suspend fun insertHseModelToServer(hseModel: HseModel) {
         val overhsegeneral = gsonPretty.toJson(hseModel)
-        Log.d("Repository", "Sending to the hse server receives: ${overhsegeneral}")
+        Log.d(TAG, "Sending to the hse server receives: ${overhsegeneral}")
         val hseModelToJson: String = gsonPretty.toJson(hseModel)
 
         val requestBody = hseModelToJson.toRequestBody("application/json".toMediaTypeOrNull())
@@ -544,10 +463,10 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
                 val prettyJson = gson2.toJson(
                     JsonParser.parseString(response.body()?.string())
                 )
-                Log.d("Repository", "Retrieve response from hseServer ${prettyJson}")
+                Log.d(TAG, "Retrieve response from hseServer ${prettyJson}")
             }
         } catch (e: Exception) {
-            Log.d("Repository", "Network after clicked retrievedData error is ${e.message}")
+            Log.d(TAG, "Network after clicked retrievedData error is ${e.message}")
         }
 
     }
@@ -566,28 +485,25 @@ class Repository  @Inject constructor(val dbGgriev: DBGrievanceSource,
 
     val retrieveHseDataLive: LiveData<List<Hsedata>> = dbGgriev.retrieveLiveHSE()
 
-    suspend fun insertToDAttachment(attachment: DattachmentModel): Long {
-        return dbGgriev.insertSingleDAttachment(attachment)
-    }
-
     suspend fun retrieveFromFireStoreData() = supervisorScope {
         launch {
             val docRef = db.collection("grievance").document()
             docRef.get().addOnSuccessListener { result ->
                val agriev = result.toObject(AgrienceModel::class.java)
 
-                Log.d("FireStoreObject", "model is: ${gsonPretty.toJson(agriev)}")
+                Log.d(TAG_FIRESTORE, "model is: ${gsonPretty.toJson(agriev)}")
 
             }.addOnFailureListener{
-                Log.d("Firestore", "Error getting documents: ", it)
+                Log.d(TAG_FIRESTORE, "Error getting documents: ", it)
 
             }
         }
     }
 
-    fun searchPaps(paps : String) : LiveData<List<PapEntryListModel>>{
-        return dbSource.searchPaps(paps)
-    }
+companion object {
+    private val TAG = Repository::class.simpleName
+    private val TAG_FIRESTORE = Repository::class.simpleName + "_FIRESTORE"
+}
 }
 sealed class PapListStateEvent<out T> {
     data class Success<T>(val data : T) : PapListStateEvent<T>()

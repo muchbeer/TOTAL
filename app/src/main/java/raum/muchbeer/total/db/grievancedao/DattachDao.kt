@@ -1,39 +1,29 @@
 package raum.muchbeer.total.db.grievancedao
 
-import androidx.lifecycle.LiveData
+import DattachmentModel
 import androidx.room.*
-import raum.muchbeer.total.model.ImageFirestore
-import raum.muchbeer.total.model.grievance.DattachmentModel
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DattachDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAttachmentList(userData : List<DattachmentModel>)
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSingleAttachment(data: DattachmentModel) : Long
+    suspend fun insertDSingleAttachment(data: DattachmentModel) : Long
 
-    @Query("SELECT * FROM d_attachment_tbl")
-    fun retrieveAttachment() : LiveData<List<DattachmentModel>>
+    @Query("SELECT * FROM d_attachment")
+    fun retrievDAttachment() : Flow<List<DattachmentModel>>
+
+    @Query("SELECT * FROM d_attachment WHERE isUploaded = :checkStatus")
+    fun retrievDListOfAttachmentBySelect(checkStatus : Boolean) : Flow<List<DattachmentModel>>
+
+    @Query("SELECT * FROM d_attachment WHERE valuation_number = :valuation_no")
+    fun retrievDListOfAttachmentByValuationNo(valuation_no : String) : Flow<List<DattachmentModel>>
 
     @Update
-    fun update(attachment: DattachmentModel)
+    suspend fun updateDAttachment(attachment: DattachmentModel)
 
-    @Query("SELECT * FROM takeToFirestore")
-    suspend fun retrieveListOfImages() : List<ImageFirestore>
+    @Query("UPDATE d_attachment SET file_url=:imageUrl WHERE file_name = :fileName")
+    suspend fun updateDImageAttachment(imageUrl: String, fileName: String)
 
-    @Query("UPDATE takeToFirestore SET imageUrl=:imageUrl WHERE fileName = :fileName")
-    fun updateImages(imageUrl: String, fileName: String)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertImages(data : ImageFirestore) : Long
-
-    @Query("SELECT * FROM d_attachment_tbl WHERE primary_key LIKE :unique_data")
-    suspend fun retrieveSingleAttachment(unique_data : String) : DattachmentModel
-
-    @Query("SELECT * FROM d_attachment_tbl")
-    suspend fun retrieveListOfAttachment() : List<DattachmentModel>
-
-    @Query("DELETE FROM d_attachment_tbl")
-    suspend fun clear()
 }
