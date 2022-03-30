@@ -27,7 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GrievanceViewModel @Inject constructor(val repository: Repository,
-                                             @ApplicationContext val context: Context
+                                             @ApplicationContext context: Context
 ) :ViewModel() {
 
     private var _inputAgreeToSign = MutableLiveData<String>()

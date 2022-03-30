@@ -4,10 +4,7 @@ import BpapDetailModel
 import CgrievanceModel
 import DattachmentModel
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import raum.muchbeer.total.db.engagedao.EngagementDao
@@ -28,7 +25,8 @@ import raum.muchbeer.total.model.vehicle.request.Vehicle
     AgrienceModel::class, BpapDetailModel::class, CgrievanceModel::class,
     DattachmentModel::class, Hsedata::class, EngageModel::class, VehiclesData::class,
     HseModel::class, Vehicle::class, VehicleModel::class]
-    ,     version = 39, exportSchema = false)
+    ,     version = 1, exportSchema = false,
+    autoMigrations = [AutoMigration(from = 1, to = 2)])
 abstract class DataDB : RoomDatabase() {
     abstract fun PapListDao() : PapListDao
     abstract fun AgrievanceDao() : AgrievanceGeneralDao
@@ -58,7 +56,6 @@ abstract class DataDB : RoomDatabase() {
                         context.applicationContext,
                         DataDB::class.java,
                         "total_db")
-                        .addMigrations(MIGRATION_38_39)
                         .build()
                 }
                 return instance
